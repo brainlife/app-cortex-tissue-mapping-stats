@@ -7,15 +7,15 @@ set -e
 
 #### parse inputs ####
 # configs
-cortexmap=`jq -r .'cortexmap' config.json`
+cortexmap=`jq -r '.cortexmap' config.json`
 lh_annot=`jq -r '.lh_annot' config.json`
 rh_annot=`jq -r '.rh_annot' config.json`
 lh_pial=`jq -r '.lh_pial_surf' config.json`
 rh_pial=`jq -r '.rh_pial_surf' config.json`
 
 # filepaths
-cp -R ${cortexmap} ./cortexmap/
-cortexmap="./cortexmap/"
+#cp -R ${cortexmap} ./cortexmap/
+#cortexmap="./cortexmap/"
 funcdir="${cortexmap}/func"
 surfdir="${cortexmap}/surf"
 labeldir="${cortexmap}/label"
