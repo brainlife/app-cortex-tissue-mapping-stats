@@ -80,7 +80,7 @@ def main():
 
 	#### parse inputs ####
 	subjectID = config['_inputs'][0]['meta']['subject']
-	if not 'lh_annot' in list(config.keys):
+	if not 'lh_annot' in list(config.keys()):
 		nonFsurfParc = config['lh_annot']
 	else:
 		nonFsurfParc = 'null'
