@@ -41,7 +41,9 @@ You can submit this App online at [https://doi.org/10.25663/brainlife.app.383](h
 2. Inside the cloned directory, create `config.json` with something like the following content with paths to your input files. 
 
 ```json 
-{"cortexmap": "./inputdata/cortexmap/cortexmap"} 
+{ 
+  "cortexmap": "./inputdata/cortexmap/cortexmap"
+} 
 ``` 
 
 ### Sample Datasets 
