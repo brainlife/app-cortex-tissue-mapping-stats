@@ -80,7 +80,7 @@ def main():
 
 	#### parse inputs ####
 	subjectID = config['_inputs'][0]['meta']['subject']
-	nonFsurfParc = config['parc']
+	nonFsurfParc = config['lh_annot']
 
 	#### set up other inputs ####
 	# grab diffusion measures from file names
