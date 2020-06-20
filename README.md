@@ -32,7 +32,7 @@ Fukutomi, H. et al. Neurite imaging reveals microstructural variations in human 
 
 ### On Brainlife.io 
 
-You can submit this App online at [https://doi.org/https://doi.org/10.25663/brainlife.app.383](https://doi.org/https://doi.org/10.25663/brainlife.app.383) via the 'Execute' tab. 
+You can submit this App online at [https://doi.org/10.25663/brainlife.app.383](https://doi.org/https://doi.org/10.25663/brainlife.app.383) via the 'Execute' tab. 
 
 ### Running Locally (on your machine) 
 
