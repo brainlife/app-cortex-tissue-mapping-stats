@@ -80,10 +80,12 @@ def main():
 
 	#### parse inputs ####
 	subjectID = config['_inputs'][0]['meta']['subject']
+	
+	# set parcellations
 	if 'lh_annot' in list(config.keys()):
-		nonFsurfParc = config['lh_annot']
+		parcellations = ['aparc','parc']
 	else:
-		nonFsurfParc = 'null'
+		parcellations = ['aparc']
 
 	#### set up other inputs ####
 	# grab diffusion measures from file names
@@ -115,12 +117,6 @@ def main():
 	else:
 		print("making output directory")
 		os.mkdir(outdir)
-
-	# set parcellations
-	if nonFsurfParc == 'null':
-		parcellations = ['aparc']
-	else:
-		parcellations = ['aparc','parc']
 
 	#### run command to generate csv structures ####
 	print("generating csvs")
