@@ -41,7 +41,7 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 			for metrics in diffusion_measures:
 				print(metrics)
 				# left hemisphere
-				with open('./%s_%s_%s.%s.txt' %(parc,measures,hemispheres[0],metrics),'r') as data_f:
+				with open('./tmp/%s_%s_%s.%s.txt' %(parc,measures,hemispheres[0],metrics),'r') as data_f:
 					if parc == 'aparc':
 						data_lh = pd.read_csv(data_f,header=None)
 					else:
@@ -49,7 +49,7 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 						data_lh = [ x.split('\n')[0] for x in data_lh ]
 
 				# right hemisphere
-				with open('./%s_%s_%s.%s.txt' %(parc,measures,hemispheres[1],metrics),'r') as data_f:
+				with open('./tmp/%s_%s_%s.%s.txt' %(parc,measures,hemispheres[1],metrics),'r') as data_f:
 					if parc == 'aparc':
 						data_rh = pd.read_csv(data_f,header=None)
 					else:
@@ -65,11 +65,11 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 				# add to dataframe
 				df[metrics] = data
 
-				# sort dataframe by structureID
-				df.sort_values(by=['structureID'],axis=0,ascending=True,inplace=True)
+			# sort dataframe by structureID
+			df.sort_values(by=['structureID'],axis=0,ascending=True,inplace=True)
 
-				# write out to csv
-				df.to_csv('./%s/%s_%s.csv' %(outdir,parc,measures), index=False)
+			# write out to csv
+			df.to_csv('./%s/%s_%s.csv' %(outdir,parc,measures), index=False)
 
 def main():
 
@@ -100,7 +100,7 @@ def main():
 		diffusion_measures = ['ndi','isovf','odi','snr','volume','thickness']
 
 	# summary statistics measures
-	summary_measures = [ x.split('.')[1].split('./tmp/aparc_')[1].split('_lh')[0] for x in glob.glob('./tmp/aparc_*_lh.ad.txt') ]
+	summary_measures = [ x.split('.')[1].split('aparc_')[1].split('_lh')[0] for x in glob.glob('./tmp/aparc_*_lh.ad.txt') ]
 	
 	# set columns for pandas array
 	columns = ['subjectID','structureID','nodeID'] + diffusion_measures
