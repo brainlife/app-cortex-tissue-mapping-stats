@@ -80,7 +80,7 @@ def main():
 
 	#### parse inputs ####
 	subjectID = config['_inputs'][0]['meta']['subject']
-	
+  
 	# set parcellations
 	if 'lh_annot' in list(config.keys()):
 		parcellations = ['aparc','parc']
@@ -124,4 +124,3 @@ def main():
 
 if __name__ == '__main__':
 	main()
-
