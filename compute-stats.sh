@@ -3,12 +3,15 @@
 # This script will compute statistics in each ROI of a parcellation
 
 set -x
-#set -e
+set -e
 
 #### parse inputs ####
 # configs
 cortexmap=`jq -r .'cortexmap' config.json`
-parc=`jq -r '.parc' config.json`
+lh_annot=`jq -r '.lh_annot' config.json`
+rh_annot=`jq -r '.rh_annot' config.json`
+lh_pial=`jq -r '.lh_pial_surf' config.json`
+rh_pial=`jq -r '.rh_pial_surf' config.json`
 
 # filepaths
 funcdir="${cortexmap}/func"
@@ -31,11 +34,13 @@ MEASURES="MIN MAX MEAN MEDIAN MODE STDEV SAMPSTDEV COUNT_NONZERO"
 for hemi in ${hemispheres}
 do
 	echo "converting files for ${hemi}"
+	parc=$(eval "echo \$${hemi}_annot")
+	pial=$(eval "echo \$${hemi}_pial")
 	# convert surface parcellations that came from multi atlas transfer tool
 	if [[ ! ${parc} == 'null' ]]; then
 		#### convert annotation files to useable label giftis ####
-		[ ! -f ${hemi}.parc.label.gii ] && mris_convert --annot ${parc}/${hemi}.parc.annot.gii \
-			${parc}/${hemi}.parc.pial.gii \
+		[ ! -f ${hemi}.parc.label.gii ] && mris_convert --annot ${parc} \
+			${pial} \
 			${hemi}.parc.label.gii
 
 		#### convert gifti labels to rois ####
@@ -87,7 +92,6 @@ do
 					-reduce ${measures} \
 					-roi ${hemi}.parc.shape.gii \
 					>> parc_${measures}_"${metrics::-9}".txt
-					#&& cat parc_${measures}_"${metrics::-9}".txt | tr "\\t" "\n" > parc_${measures}_"${metrics::-9}".txt
 			fi
 		done
 	fi
