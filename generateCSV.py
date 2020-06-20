@@ -93,11 +93,11 @@ def main():
 
 	# depending on what's in the array, rearrange in a specific order I like
 	if all(x in diffusion_measures for x in ['ndi','fa']):
-		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','snr']
+		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','snr','volume','thickness']
 	elif 'fa' in diffusion_measures:
-		diffusion_measures = ['ad','fa','md','rd','snr']
+		diffusion_measures = ['ad','fa','md','rd','snr','volume','thickness']
 	else:
-		diffusion_measures = ['ndi','isovf','odi','snr']
+		diffusion_measures = ['ndi','isovf','odi','snr','volume','thickness']
 
 	# summary statistics measures
 	summary_measures = [ x.split('.')[0].split('aparc_')[1].split('_lh')[0] for x in glob.glob('aparc_*_lh.'+diffusion_measures[0]+'.txt') ]

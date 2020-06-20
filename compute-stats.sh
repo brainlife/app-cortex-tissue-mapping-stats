@@ -64,7 +64,7 @@ done
 roi_keys_lh=$(wb_command -file-information lh.aparc.shape.gii -only-map-names)
 roi_keys_rh=$(wb_command -file-information rh.aparc.shape.gii -only-map-names)
 
-#### compute MIN MAX MEAN MEDIAN MODE STDEV SAMPSTDEV COUNT_NONZERO of each metric per roi ####
+#### compute MIN MAX MEAN MEDIAN MODE STDEV SAMPSTDEV COUNT_NONZERO of each metric per roi: diffusion measures ####
 for metrics in ${METRICS[*]}
 do
 	hemi="${metrics::2}"
@@ -97,4 +97,36 @@ do
 			fi
 		done
 	fi
+done
+
+#### compute MIN MAX MEAN MEDIAN MODE STDEV SAMPSTDEV COUNT_NONZERO of each metric per roi: volume and thickness ####
+METRICS="volume thickness"
+for metrics in ${METRICS}
+do
+	echo "computing statistics for ${metrics}"
+	for hemi in ${hemispheres}
+	do
+		for measures in ${MEASURES}
+		do
+			echo ${measures}
+			for KEYS in ${keys}
+			do
+				if [[ ! ${KEYS:3} == 'Medial_wall' ]]; then
+
+					# compute in freesurfer parcellation
+					[ ! aparc_${measures}_${metrics}.txt ] && wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+						-reduce ${measures} \
+						-roi ./aparc-rois/${hemi}.aparc.${KEYS:3}.shape.gii >> aparc_${measures}_"${metrics}".txt
+				fi
+			done
+
+			# if parcellation inputted, compute stats in parcellation as well
+			if [[ ! ${parc} == 'null' ]]; then
+				[ ! -f parc_${measures}_"${metrics}".txt ] && wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+					-reduce ${measures} \
+					-roi ${hemi}.parc.shape.gii \
+					>> parc_${measures}_"${metrics}".txt
+			fi
+		done
+	done
 done
