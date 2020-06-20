@@ -3,7 +3,7 @@
 
 # Compute summary statistics of diffusion measures mapped to cortical surface 
 
-This app will This app will compute multiple summary statistics from measures mapped to the cortical midthickness surface on a per-ROI basis. This app takes in a cortexmap datatype and an optional parcellation/surface datatype. This app will compute the following summary statistics: minimum, maximum, mean, median, mode, standard deviation, sample standard deviation (n-1), and nonzero vertex count. The app will output a csv for each summary measure summarizing the diffusion measures in each ROI parcellation. If no parcellation surface is inputted, the app will just compute stats from the labels file found in the cortexmap datatype (usually aparc.a2009s.labels.gii). These csvs can be used for computing group averages and for performing machine learning analyses. 
+This app will compute multiple summary statistics from measures mapped to the cortical midthickness surface on a per-ROI basis. This app takes in a cortexmap datatype and an optional parcellation/surface datatype. This app will compute the following summary statistics: minimum, maximum, mean, median, mode, standard deviation, sample standard deviation (n-1), and nonzero vertex count. The app will output a csv for each summary measure summarizing the diffusion measures in each ROI parcellation. If no parcellation surface is inputted, the app will just compute stats from the labels file found in the cortexmap datatype (usually aparc.a2009s.labels.gii). These csvs can be used for computing group averages and for performing machine learning analyses. 
 
 ### Authors 
 
@@ -65,7 +65,7 @@ bl dataset download
 
 ## Output 
 
-The main output of this App is The main output is a folder called 'parc-stats' with csv's for each summary measure and parcellation inputted 
+The main output is a folder called 'parc-stats' with csv's for each summary measure and parcellation inputted 
 
 #### Product.json 
 
