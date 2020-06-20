@@ -115,16 +115,16 @@ do
 					# compute in freesurfer parcellation
 					wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
 						-reduce ${measures} \
-						-roi ./aparc-rois/${hemi}.aparc.${KEYS:3}.shape.gii >> aparc_${measures}_"${metrics}".txt
+						-roi ./aparc-rois/${hemi}.aparc.${KEYS:3}.shape.gii >> aparc_${measures}_${hemi}."${metrics}".txt
 				fi
 			done
 
 			# if parcellation inputted, compute stats in parcellation as well
 			if [[ ! ${parc} == 'null' ]]; then
-				[ ! -f parc_${measures}_"${metrics}".txt ] && wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+				[ ! -f parc_${measures}_${hemi}."${metrics}".txt ] && wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
 					-reduce ${measures} \
 					-roi ${hemi}.parc.shape.gii \
-					>> parc_${measures}_"${metrics}".txt
+					>> parc_${measures}_${hemi}."${metrics}".txt
 			fi
 		done
 	done
