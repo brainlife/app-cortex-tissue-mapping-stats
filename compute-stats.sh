@@ -20,9 +20,10 @@ funcdir="${cortexmap}/func"
 surfdir="${cortexmap}/surf"
 labeldir="${cortexmap}/label"
 roidir="./aparc-rois/"
+tmpdir="./tmp/"
 
 # make directories
-mkdir -p ${roidir}
+mkdir -p ${roidir} ${tmpdir}
 
 # hemispheres
 hemispheres="lh rh"
@@ -84,16 +85,16 @@ do
 					# compute in freesurfer parcellation
 					wb_command -metric-stats ${funcdir}/${metrics} \
 						-reduce ${measures} \
-						-roi ./aparc-rois/${hemi}.aparc.${KEYS:3}.shape.gii >> aparc_${measures}_"${metrics::-9}".txt
+						-roi ./aparc-rois/${hemi}.aparc.${KEYS:3}.shape.gii >> ${tmpdir}/aparc_${measures}_"${metrics::-9}".txt
 				fi
 			done
 
 			# if parcellation inputted, compute stats in parcellation as well
 			if [[ ! ${parc} == 'null' ]]; then
-				[ ! -f parc_${measures}_"${metrics::-9}".txt ] && wb_command -metric-stats ${funcdir}/${metrics} \
+				[ ! -f ${tmpdir}/parc_${measures}_"${metrics::-9}".txt ] && wb_command -metric-stats ${funcdir}/${metrics} \
 					-reduce ${measures} \
 					-roi ${hemi}.parc.shape.gii \
-					>> parc_${measures}_"${metrics::-9}".txt
+					>> ${tmpdir}/parc_${measures}_"${metrics::-9}".txt
 			fi
 		done
 	fi
@@ -115,16 +116,16 @@ do
 					# compute in freesurfer parcellation
 					wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
 						-reduce ${measures} \
-						-roi ./aparc-rois/${hemi}.aparc.${KEYS:3}.shape.gii >> aparc_${measures}_${hemi}."${metrics}".txt
+						-roi ./aparc-rois/${hemi}.aparc.${KEYS:3}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
 				fi
 			done
 
 			# if parcellation inputted, compute stats in parcellation as well
 			if [[ ! ${parc} == 'null' ]]; then
-				[ ! -f parc_${measures}_${hemi}."${metrics}".txt ] && wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+				[ ! -f ${tmpdir}/parc_${measures}_${hemi}."${metrics}".txt ] && wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
 					-reduce ${measures} \
 					-roi ${hemi}.parc.shape.gii \
-					>> parc_${measures}_${hemi}."${metrics}".txt
+					>> ${tmpdir}/parc_${measures}_${hemi}."${metrics}".txt
 			fi
 		done
 	done

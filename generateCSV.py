@@ -80,11 +80,16 @@ def main():
 
 	#### parse inputs ####
 	subjectID = config['_inputs'][0]['meta']['subject']
-	nonFsurfParc = config['lh_annot']
+	
+	# set parcellations
+	if 'lh_annot' in list(config.keys()):
+		parcellations = ['aparc','parc']
+	else:
+		parcellations = ['aparc']
 
 	#### set up other inputs ####
 	# grab diffusion measures from file names
-	diffusion_measures = [ x.split('.')[1] for x in glob.glob('aparc_MIN_lh.*.txt') ]
+	diffusion_measures = [ x.split('.')[2] for x in glob.glob('./tmp/aparc_MIN_lh.*.txt') ]
 
 	# depending on what's in the array, rearrange in a specific order I like
 	if all(x in diffusion_measures for x in ['ndi','fa']):
@@ -95,7 +100,7 @@ def main():
 		diffusion_measures = ['ndi','isovf','odi','snr','volume','thickness']
 
 	# summary statistics measures
-	summary_measures = [ x.split('.')[0].split('aparc_')[1].split('_lh')[0] for x in glob.glob('aparc_*_lh.ad.txt') ]
+	summary_measures = [ x.split('.')[1].split('./tmp/aparc_')[1].split('_lh')[0] for x in glob.glob('./tmp/aparc_*_lh.ad.txt') ]
 	
 	# set columns for pandas array
 	columns = ['subjectID','structureID','nodeID'] + diffusion_measures
@@ -112,12 +117,6 @@ def main():
 	else:
 		print("making output directory")
 		os.mkdir(outdir)
-
-	# set parcellations
-	if nonFsurfParc == 'null':
-		parcellations = ['aparc']
-	else:
-		parcellations = ['aparc','parc']
 
 	#### run command to generate csv structures ####
 	print("generating csvs")
