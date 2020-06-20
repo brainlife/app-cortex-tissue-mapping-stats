@@ -79,4 +79,5 @@ This App requires the following libraries when run locally.
 - FSL: https://hub.docker.com/r/brainlife/fsl/tags/5.0.9
 - Freesurfer: https://hub.docker.com/r/brainlife/freesurfer/tags/6.0.0
 - jsonlab: https://github.com/fangq/jsonlab.git
+- python3: https://www.python.org/downloads/
 - Connectome Workbench: https://hub.docker.com/r/brainlife/connectome_workbench
