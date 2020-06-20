@@ -42,7 +42,16 @@ You can submit this App online at [https://doi.org/10.25663/brainlife.app.383](h
 
 ```json 
 { 
-  "cortexmap": "./inputdata/cortexmap/cortexmap"
+  "cortexmap": "./inputdata/cortexmap",
+  "_inputs": [
+        {
+            "id": "cortexmap",
+            "meta": {
+                "subject": "subj001",
+                "session": "1"
+                    }
+        }
+    ]
 } 
 ``` 
 
