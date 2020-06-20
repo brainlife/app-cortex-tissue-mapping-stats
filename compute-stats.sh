@@ -112,9 +112,8 @@ do
 			for KEYS in ${keys}
 			do
 				if [[ ! ${KEYS:3} == 'Medial_wall' ]]; then
-
 					# compute in freesurfer parcellation
-					[ ! aparc_${measures}_${metrics}.txt ] && wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+					wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
 						-reduce ${measures} \
 						-roi ./aparc-rois/${hemi}.aparc.${KEYS:3}.shape.gii >> aparc_${measures}_"${metrics}".txt
 				fi
