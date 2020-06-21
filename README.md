@@ -12,7 +12,7 @@ This app will compute multiple summary statistics from measures mapped to the co
 ### Contributors 
 
 - Soichi Hayashi (hayashi@iu.edu)
-- Franco Pestilli (franpest@iu.edu) 
+- Franco Pestilli (frakkopesto@gmail.com) 
 
 ### Funding 
 
