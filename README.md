@@ -12,7 +12,7 @@ This app will compute multiple summary statistics from measures mapped to the co
 ### Contributors 
 
 - Soichi Hayashi (hayashi@iu.edu)
-Franco Pestilli (franpest@iu.edu) 
+- Franco Pestilli (franpest@iu.edu) 
 
 ### Funding 
 
@@ -27,6 +27,8 @@ Franco Pestilli (franpest@iu.edu)
 Please cite the following articles when publishing papers that used data, code or other resources created by the brainlife.io community. 
 
 Fukutomi, H. et al. Neurite imaging reveals microstructural variations in human cerebral cortical gray matter. Neuroimage (2018). doi:10.1016/j.neuroimage.2018.02.017 
+
+Avesani, P., McPherson, B., Hayashi, S. et al. The open diffusion data derivatives, brain data upcycling via integrated publishing of derivatives and reproducible open cloud services. Sci Data 6, 69 (2019). https://doi.org/10.1038/s41597-019-0073-y
 
 ## Running the App 
 
