@@ -65,6 +65,10 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 			
 				# add to dataframe
 				df[metrics] = data
+				
+				# handle scaling issues
+				if np.median(df[metrics].astype(np.float)) < 0.01:
+					df[metrics] = df[metrics] * 1000
 
 			# sort dataframe by structureID
 			#df.sort_values(by=['structureID'],axis=0,ascending=True,inplace=True)
