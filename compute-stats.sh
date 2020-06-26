@@ -59,23 +59,20 @@ do
 	[ ! -f ${hemi}.aparc.shape.gii ] && wb_command -gifti-all-labels-to-rois ${labeldir}/${hemi}.aparc.*.native.label.gii \
 		1 \
 		${hemi}.aparc.shape.gii
-done
 
-#### medial wall parcellation in aparc.a2009s is troublesome. need to loop through number of maps to skip this, or else the metric-stats function fails
-roi_keys_lh=$(wb_command -file-information lh.aparc.shape.gii -only-map-names)
-roi_keys_rh=$(wb_command -file-information rh.aparc.shape.gii -only-map-names)
-
-# create aparc keys file
-for hemi in hemispheres
-do
-	keys=$(eval "echo \$roi_keys_${hemi}")
-	for KEYS in ${keys}
+	# add aparc keyes to text file
+	roi_keys=$(wb_command -file-information ${hemi}.aparc.shape.gii -only-map-names)
+	for KEYS in ${roi_keys}
 	do
 		if [[ ! ${KEYS:3} == 'Medial_wall' ]]; then
 			echo ${KEYS} >> aparc_keys.txt
 		fi
 	done
 done
+
+#### medial wall parcellation in aparc.a2009s is troublesome. need to loop through number of maps to skip this, or else the metric-stats function fails
+roi_keys_lh=$(wb_command -file-information lh.aparc.shape.gii -only-map-names)
+roi_keys_rh=$(wb_command -file-information rh.aparc.shape.gii -only-map-names)
 
 #### compute MIN MAX MEAN MEDIAN MODE STDEV SAMPSTDEV COUNT_NONZERO of each metric per roi: diffusion measures ####
 for metrics in ${METRICS[*]}
