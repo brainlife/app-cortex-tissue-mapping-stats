@@ -67,7 +67,7 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 				df[metrics] = data
 
 			# sort dataframe by structureID
-			df.sort_values(by=['structureID'],axis=0,ascending=True,inplace=True)
+			#df.sort_values(by=['structureID'],axis=0,ascending=True,inplace=True)
 
 			# write out to csv
 			df.to_csv('./%s/%s_%s.csv' %(outdir,parc,measures), index=False)
