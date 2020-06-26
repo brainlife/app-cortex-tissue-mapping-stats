@@ -65,6 +65,18 @@ done
 roi_keys_lh=$(wb_command -file-information lh.aparc.shape.gii -only-map-names)
 roi_keys_rh=$(wb_command -file-information rh.aparc.shape.gii -only-map-names)
 
+# create aparc keys file
+for hemi in hemispheres
+do
+	keys=$(eval "echo \$roi_keys_${hemi}")
+	for KEYS in ${keys}
+	do
+		if [[ ! ${KEYS:3} == 'Medial_wall' ]]; then
+			echo ${KEYS} >> aparc_keys.txt
+		fi
+	done
+done
+
 #### compute MIN MAX MEAN MEDIAN MODE STDEV SAMPSTDEV COUNT_NONZERO of each metric per roi: diffusion measures ####
 for metrics in ${METRICS[*]}
 do
@@ -80,7 +92,7 @@ do
 			do
 				if [[ ! ${KEYS:3} == 'Medial_wall' ]]; then
 					echo ${KEYS} >> aparc_keys.txt
-					
+
 					[ ! -f ./aparc-rois/${hemi}.aparc.${KEYS:3}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.aparc.*.native.label.gii \
 						./aparc-rois/${hemi}.aparc.${KEYS:3}.shape.gii -name "${KEYS}" -map "${hemi}_aparc.a2009s"
 
