@@ -88,8 +88,6 @@ do
 			for KEYS in ${keys}
 			do
 				if [[ ! ${KEYS:3} == 'Medial_wall' ]]; then
-					echo ${KEYS} >> aparc_keys.txt
-
 					[ ! -f ./aparc-rois/${hemi}.aparc.${KEYS:3}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.aparc.*.native.label.gii \
 						./aparc-rois/${hemi}.aparc.${KEYS:3}.shape.gii -name "${KEYS}" -map "${hemi}_aparc.a2009s"
 
