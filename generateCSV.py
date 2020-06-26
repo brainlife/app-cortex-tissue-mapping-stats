@@ -14,7 +14,8 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 
 		# identify structure names from files. because of medial wall in aparc.a2009s, have to do in this weird way
 		if parc == 'aparc':
-			structureList = [ x.split('/')[2].split('.shape.gii')[0] for x in glob.glob('./aparc-rois/*.aparc*') ]
+			with open('aparc_keys.txt') as aparc_keys:
+				structureList = aparc_keys.read().split()
 		else:
 			with open('parc.structurelist_lh.txt','r') as structures: 
 				structuresList_lh = structures.read().split('\n')
@@ -25,7 +26,7 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 				structuresList_rh = [ x for x in structuresList_rh if x ]
 
 			structureList = structuresList_lh + structuresList_rh
-			print(structureList)
+		print(structureList)
 
 		# loop through summary statistic measures making one csv per parcellation and measure
 		for measures in summary_measures:
