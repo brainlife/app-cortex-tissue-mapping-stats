@@ -21,7 +21,7 @@ time singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./generateCSV.p
 if [ -f ./parc-stats/aparc_STDEV.csv ]; then
 	mkdir raw
 	mv aparc-rois/ *.txt ./tmp/*.txt *.gii ./raw/
-	rm -rf tmp cortexmap
+	rm -rf tmp
 	echo "complete"
 	exit 0
 else
