@@ -32,7 +32,7 @@ hemispheres="lh rh"
 METRICS=($(ls ${funcdir}))
 
 # summary measures
-MEASURES="MIN MAX MEAN MEDIAN MODE STDEV SAMPSTDEV COUNT_NONZERO"
+MEASURES="MIN MAX MEAN MEDIAN MODE STDEV COUNT_NONZERO"
 
 for hemi in ${hemispheres}
 do
