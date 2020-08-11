@@ -97,10 +97,10 @@ def main():
 	diffusion_measures = [ x.split('.')[2] for x in glob.glob('./tmp/aparc_MIN_lh.*.txt') ]
 
 	# depending on what's in the array, rearrange in a specific order I like
-	if all(x in diffusion_measures for x in ['ndi','fa']):
-		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','snr','volume','thickness']
-	elif all(x in diffusion_measures for x in ['ndi','ga']):
+	if all(x in diffusion_measures for x in ['ndi','ga']):
 		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','volume','thickness']
+	elif all(x in diffusion_measures for x in ['ndi','fa']):
+		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','snr','volume','thickness']
 	elif 'ga' in diffusion_measures:
 		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','volume','thickness']
 	elif 'fa' in diffusion_measures:
