@@ -106,7 +106,7 @@ def main():
 	elif 'fa' in diffusion_measures:
 		diffusion_measures = ['ad','fa','md','rd','snr','volume','thickness']
 	elif 'gmd' in diffusion_measures:
-		diffusion_measures = ['gmd','volume','thickness']
+		diffusion_measures = ['gmd','snr','volume','thickness']
 	else:
 		diffusion_measures = ['ndi','isovf','odi','snr','volume','thickness']
 
