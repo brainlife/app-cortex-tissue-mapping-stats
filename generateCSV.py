@@ -111,7 +111,7 @@ def main():
 		diffusion_measures = ['ndi','isovf','odi','snr','volume','thickness']
 
 	# summary statistics measures
-	summary_measures = [ x.split('.')[1].split('aparc_')[1].split('_lh')[0] for x in glob.glob('./tmp/aparc_*_lh.ad.txt') ]
+	summary_measures = [ x.split('.')[1].split('aparc_')[1].split('_lh')[0] for x in glob.glob('./tmp/aparc_*_lh.%s.txt' %diffusion_measures[0]) ]
 	
 	# set columns for pandas array
 	columns = ['subjectID','structureID','nodeID'] + diffusion_measures
