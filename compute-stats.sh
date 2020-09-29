@@ -40,6 +40,7 @@ do
 	echo "converting files for ${hemi}"
 	parc=$(eval "echo \$${hemi}_annot")
 	pial=$(eval "echo \$${hemi}_pial")
+
 	# convert surface parcellations that came from multi atlas transfer tool
 	if [[ ! ${parc} == 'null' ]]; then
 		#### convert annotation files to useable label giftis ####
@@ -64,6 +65,10 @@ do
 					keyname=${KEYS:2}
 				else
 					keyname=${KEYS:3}
+				fi
+
+				if [[ "${keyname}" == *"_ROI" ]]; then
+					keyname=`cut -d"_ROI" -f1 >>> ${keyname}`
 				fi
 
 				if [[ ! ${keyname} == 'H' ]]; then
@@ -148,6 +153,10 @@ do
 							keyname=${KEYS:3}
 						fi
 
+						if [[ "${keyname}" == *"_ROI" ]]; then
+							keyname=`cut -d"_ROI" -f1 >>> ${keyname}`
+						fi
+
 						if [[ ! ${keyname} == 'H' ]]; then
 							[ ! -f ${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${hemi}.parc.label.gii \
 								${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii -name "${KEYS}" -map "${hemi}_parc"
@@ -206,6 +215,10 @@ do
 						else
 							HEMI=${hemi}
 							keyname=${KEYS:3}
+						fi
+
+						if [[ "${keyname}" == *"_ROI" ]]; then
+							keyname=`cut -d"_ROI" -f1 >>> ${keyname}`
 						fi
 
 						if [[ ! ${keyname} == 'H' ]]; then
