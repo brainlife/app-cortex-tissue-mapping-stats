@@ -56,7 +56,13 @@ do
 		roi_keys=$(wb_command -file-information ${hemi}.parc.shape.gii -only-map-names)
 		for KEYS in ${roi_keys}
 		do
-			if [[ ! ${KEYS:3} == 'H' ]]; then
+			if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
+				keyname=${KEYS:2}
+			else
+				keyname=${KEYS:3}
+			fi
+
+			if [[ ! ${keyname} == 'H' ]] || [[ ! ${keyname} == 'unknown_0' ]]; then
 				echo ${KEYS} >> parc_keys.txt
 			fi
 		done
@@ -71,7 +77,13 @@ do
 	roi_keys=$(wb_command -file-information ${hemi}.aparc.shape.gii -only-map-names)
 	for KEYS in ${roi_keys}
 	do
-		if [[ ! ${KEYS:3} == 'Medial_wall' ]]; then
+		if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
+			keyname=${KEYS:2}
+		else
+			keyname=${KEYS:3}
+		fi
+
+		if [[ ! ${keyname} == 'Medial_wall' ]]; then
 			echo ${KEYS} >> aparc_keys.txt
 		fi
 	done
@@ -99,7 +111,7 @@ do
 			echo ${measures}
 			for KEYS in ${keys}
 			do
-				if [[ ${keys::1} == 'L' ]] || [[ ${keys::1} == 'R' ]]; then
+				if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
 					HEMI=${keys::1}
 					keyname=${KEYS:2}
 				else
@@ -122,7 +134,7 @@ do
 			if [[ ! ${parc} == 'null' ]]; then
 				for KEYS in ${keys_parc}
 				do
-					if [[ ${keys_parc::1} == 'L' ]] || [[ ${keys_parc::1} == 'R' ]]; then
+					if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
 						HEMI=${keys::1}
 						keyname=${KEYS:2}
 					else
