@@ -56,14 +56,16 @@ do
 		roi_keys=$(wb_command -file-information ${hemi}.parc.shape.gii -only-map-names)
 		for KEYS in ${roi_keys}
 		do
-			if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
-				keyname=${KEYS:2}
-			else
-				keyname=${KEYS:3}
-			fi
+			if [[ ! ${KEYS} == 'unknown_0' ]]; then
+				if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
+					keyname=${KEYS:2}
+				else
+					keyname=${KEYS:3}
+				fi
 
-			if [[ ! ${keyname} == 'H' ]] || [[ ! ${keyname} == 'unknown_0' ]]; then
-				echo ${KEYS} >> parc_keys.txt
+				if [[ ! ${keyname} == 'H' ]]; then
+					echo ${KEYS} >> parc_keys.txt
+				fi
 			fi
 		done
 	fi
@@ -134,22 +136,24 @@ do
 			if [[ ! ${parc} == 'null' ]]; then
 				for KEYS in ${keys_parc}
 				do
-					if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
-						HEMI=${keys::1}
-						keyname=${KEYS:2}
-					else
-						HEMI=${hemi}
-						keyname=${KEYS:3}
-					fi
+					if [[ ! ${KEYS} == 'unknown_0' ]]; then
+						if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
+							HEMI=${keys::1}
+							keyname=${KEYS:2}
+						else
+							HEMI=${hemi}
+							keyname=${KEYS:3}
+						fi
 
-					if [[ ! ${keyname} == 'H' ]]; then
-						[ ! -f ${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${hemi}.parc.label.gii \
-							${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii -name "${KEYS}" -map "${hemi}_parc"
+						if [[ ! ${keyname} == 'H' ]]; then
+							[ ! -f ${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${hemi}.parc.label.gii \
+								${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii -name "${KEYS}" -map "${hemi}_parc"
 
-						# compute in freesurfer parcellation
-						wb_command -metric-stats ${funcdir}/${metrics} \
-							-reduce ${measures} \
-							-roi ${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii >> ${tmpdir}/parc_${measures}_"${metrics::-9}".txt
+							# compute in freesurfer parcellation
+							wb_command -metric-stats ${funcdir}/${metrics} \
+								-reduce ${measures} \
+								-roi ${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii >> ${tmpdir}/parc_${measures}_"${metrics::-9}".txt
+						fi
 					fi
 				done
 			fi
@@ -192,19 +196,21 @@ do
 			if [[ ! ${parc} == 'null' ]]; then
 				for KEYS in ${keys_parc}
 				do
-					if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
-						HEMI=${keys_parc::1}
-						keyname=${KEYS:2}
-					else
-						HEMI=${hemi}
-						keyname=${KEYS:3}
-					fi
+					if [[ ! ${KEYS} == 'unknown_0' ]]; then
+						if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
+							HEMI=${keys_parc::1}
+							keyname=${KEYS:2}
+						else
+							HEMI=${hemi}
+							keyname=${KEYS:3}
+						fi
 
-					if [[ ! ${keyname} == 'H' ]]; then
-						# compute in parcellation
-						wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
-							-reduce ${measures} \
-							-roi ${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii >> ${tmpdir}/parc_${measures}_${hemi}."${metrics}".txt
+						if [[ ! ${keyname} == 'H' ]]; then
+							# compute in parcellation
+							wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+								-reduce ${measures} \
+								-roi ${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii >> ${tmpdir}/parc_${measures}_${hemi}."${metrics}".txt
+						fi
 					fi
 				done
 			fi
