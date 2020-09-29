@@ -140,10 +140,12 @@ do
 				fi
 
 				if [[ ! ${keyname} == 'Medial_wall' ]]; then
-					# compute in freesurfer parcellation
-					wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
-						-reduce ${measures} \
-						-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
+					if [ ! -f ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt ]; then
+						# compute in freesurfer parcellation
+						wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+							-reduce ${measures} \
+							-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
+					fi
 				fi
 			done
 
