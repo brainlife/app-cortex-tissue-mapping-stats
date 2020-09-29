@@ -122,7 +122,7 @@ do
 			for KEYS in ${keys}
 			do
 				if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
-					HEMI=${keys::1}
+					HEMI=${KEYS::1}
 					keyname=${KEYS:2}
 				else
 					HEMI=${hemi}
@@ -146,7 +146,7 @@ do
 				do
 					if [[ ! ${KEYS} == 'unknown_0' ]]; then
 						if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
-							HEMI=${keys::1}
+							HEMI=${KEYS::1}
 							keyname=${KEYS:2}
 						else
 							HEMI=${hemi}
@@ -189,7 +189,7 @@ do
 			for KEYS in ${keys}
 			do
 				if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
-					HEMI=${keys::1}
+					HEMI=${KEYS::1}
 					keyname=${KEYS:2}
 				else
 					HEMI=${hemi}
@@ -210,7 +210,7 @@ do
 				do
 					if [[ ! ${KEYS} == 'unknown_0' ]]; then
 						if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
-							HEMI=${keys_parc::1}
+							HEMI=${KEYS::1}
 							keyname=${KEYS:2}
 						else
 							HEMI=${hemi}
