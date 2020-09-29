@@ -67,7 +67,7 @@ do
 					keyname=${KEYS:3}
 				fi
 
-				if [[ "${keyname}" == *"_ROI" ]]; then
+				if [[ "${keyname}" == *"_ROI"* ]]; then
 					keyname=`cut -d"_ROI" -f1 <<< ${keyname}`
 				fi
 
@@ -153,7 +153,7 @@ do
 							keyname=${KEYS:3}
 						fi
 
-						if [[ "${keyname}" == *"_ROI" ]]; then
+						if [[ "${keyname}" == *"_ROI"* ]]; then
 							keyname=`cut -d"_ROI" -f1 <<< ${keyname}`
 						fi
 
@@ -217,7 +217,7 @@ do
 							keyname=${KEYS:3}
 						fi
 
-						if [[ "${keyname}" == *"_ROI" ]]; then
+						if [[ "${keyname}" == *"_ROI"* ]]; then
 							keyname=`cut -d"_ROI" -f1 <<< ${keyname}`
 						fi
 
