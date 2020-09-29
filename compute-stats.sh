@@ -87,14 +87,22 @@ do
 			echo ${measures}
 			for KEYS in ${keys}
 			do
-				if [[ ! ${KEYS:3} == 'Medial_wall' ]]; then
-					[ ! -f ./aparc-rois/${hemi}.aparc.${KEYS:3}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.aparc.*.native.label.gii \
-						./aparc-rois/${hemi}.aparc.${KEYS:3}.shape.gii -name "${KEYS}" -map "${hemi}_aparc.a2009s"
+				if [[ ${keys::1} == 'L' ]] || [[ ${keys::1} == 'R' ]]; then
+					HEMI=${keys::1}
+					keyname=${KEYS:2}
+				else
+					HEMI=${hemi}
+					keyname=${KEYS:3}
+				fi
+
+				if [[ ! ${keyname} == 'Medial_wall' ]]; then
+					[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.aparc.*.native.label.gii \
+						./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii -name "${KEYS}" -map "${hemi}_aparc.a2009s"
 
 					# compute in freesurfer parcellation
 					wb_command -metric-stats ${funcdir}/${metrics} \
 						-reduce ${measures} \
-						-roi ./aparc-rois/${hemi}.aparc.${KEYS:3}.shape.gii >> ${tmpdir}/aparc_${measures}_"${metrics::-9}".txt
+						-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_"${metrics::-9}".txt
 				fi
 			done
 
@@ -121,11 +129,19 @@ do
 			echo ${measures}
 			for KEYS in ${keys}
 			do
-				if [[ ! ${KEYS:3} == 'Medial_wall' ]]; then
+				if [[ ${keys::1} == 'L' ]] || [[ ${keys::1} == 'R' ]]; then
+					HEMI=${keys::1}
+					keyname=${KEYS:2}
+				else
+					HEMI=${hemi}
+					keyname=${KEYS:3}
+				fi
+
+				if [[ ! ${keyname} == 'Medial_wall' ]]; then
 					# compute in freesurfer parcellation
 					wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
 						-reduce ${measures} \
-						-roi ./aparc-rois/${hemi}.aparc.${KEYS:3}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
+						-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
 				fi
 			done
 
