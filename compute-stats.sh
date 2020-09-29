@@ -20,7 +20,7 @@ funcdir="${cortexmap}/func"
 surfdir="${cortexmap}/surf"
 labeldir="${cortexmap}/label"
 roidir="./aparc-rois/"
-roidir_parc="./aparc-rois/"
+roidir_parc="./parc-rois/"
 tmpdir="./tmp/"
 
 # make directories
