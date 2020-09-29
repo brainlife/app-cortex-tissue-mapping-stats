@@ -107,6 +107,12 @@ def main():
 		diffusion_measures = ['ad','fa','md','rd','snr','volume','thickness']
 	elif 'gmd' in diffusion_measures:
 		diffusion_measures = ['gmd','snr','volume','thickness']
+	elif all(x in diffusion_measures for x in ['noddi_kappa','ga']):
+		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','noddi_kappa','volume','thickness']
+	elif all(x in diffusion_measures for x in ['noddi_kappa','fa']):
+		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
+	elif 'noddi_kappa' in diffusion_measures:
+		diffusion_measures = ['ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
 	else:
 		diffusion_measures = ['ndi','isovf','odi','snr','volume','thickness']
 
