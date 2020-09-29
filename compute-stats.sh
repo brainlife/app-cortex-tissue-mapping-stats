@@ -20,10 +20,11 @@ funcdir="${cortexmap}/func"
 surfdir="${cortexmap}/surf"
 labeldir="${cortexmap}/label"
 roidir="./aparc-rois/"
+roidir_parc="./aparc-rois/"
 tmpdir="./tmp/"
 
 # make directories
-mkdir -p ${roidir} ${tmpdir}
+mkdir -p ${roidir} ${tmpdir} ${roidir_parc}
 
 # hemispheres
 hemispheres="lh rh"
@@ -51,8 +52,14 @@ do
 			1 \
 			${hemi}.parc.shape.gii
 
-		# print structure list for inputted parcellation
-		[ ! -f 'parc.structurelist_${hemi}.txt' ] && wb_command -file-information ${hemi}.parc.shape.gii -only-map-names > parc.structurelist_"${hemi}".txt
+		# add parc keyes to text file
+		roi_keys=$(wb_command -file-information ${hemi}.parc.shape.gii -only-map-names)
+		for KEYS in ${roi_keys}
+		do
+			if [[ ! ${KEYS:3} == 'H' ]]; then
+				echo ${KEYS} >> parc_keys.txt
+			fi
+		done
 	fi
 
 	# convert freesurfer aparc labels from cortexmapping app
@@ -74,11 +81,16 @@ done
 roi_keys_lh=$(wb_command -file-information lh.aparc.shape.gii -only-map-names)
 roi_keys_rh=$(wb_command -file-information rh.aparc.shape.gii -only-map-names)
 
+#### hippocampus parcellation in glasser atlas (hcp-mmp-b) is troublesome. need to loop through number of maps to skip this, or else the metric-stats function fails
+roi_keys_lh_parc=$(wb_command -file-information lh.parc.shape.gii -only-map-names)
+roi_keys_rh_parc=$(wb_command -file-information rh.parc.shape.gii -only-map-names)
+
 #### compute MIN MAX MEAN MEDIAN MODE STDEV SAMPSTDEV COUNT_NONZERO of each metric per roi: diffusion measures ####
 for metrics in ${METRICS[*]}
 do
 	hemi="${metrics::2}"
 	keys=$(eval "echo \$roi_keys_${hemi}")
+	keys_parc=$(eval "echo \$roi_keys_${hemi}_parc")
 
 	if [[ ! ${metrics:3} == 'goodvertex.func.gii' ]]; then
 		echo "computing measures for ${metrics}"
@@ -108,10 +120,26 @@ do
 
 			# if parcellation inputted, compute stats in parcellation as well
 			if [[ ! ${parc} == 'null' ]]; then
-				[ ! -f ${tmpdir}/parc_${measures}_"${metrics::-9}".txt ] && wb_command -metric-stats ${funcdir}/${metrics} \
-					-reduce ${measures} \
-					-roi ${hemi}.parc.shape.gii \
-					>> ${tmpdir}/parc_${measures}_"${metrics::-9}".txt
+				for KEYS in ${keys_parc}
+				do
+					if [[ ${keys_parc::1} == 'L' ]] || [[ ${keys_parc::1} == 'R' ]]; then
+						HEMI=${keys::1}
+						keyname=${KEYS:2}
+					else
+						HEMI=${hemi}
+						keyname=${KEYS:3}
+					fi
+
+					if [[ ! ${keyname} == 'H' ]]; then
+						[ ! -f ${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${hemi}.parc.label.gii \
+							${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii -name "${KEYS}" -map "${hemi}_parc"
+
+						# compute in freesurfer parcellation
+						wb_command -metric-stats ${funcdir}/${metrics} \
+							-reduce ${measures} \
+							-roi ${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii >> ${tmpdir}/parc_${measures}_"${metrics::-9}".txt
+					fi
+				done
 			fi
 		done
 	fi
@@ -125,6 +153,7 @@ do
 	for hemi in ${hemispheres}
 	do
 		keys=$(eval "echo \$roi_keys_${hemi}")
+		keys_parc=$(eval "echo \$roi_keys_${hemi}_parc")
 
 		for measures in ${MEASURES}
 		do
@@ -149,10 +178,23 @@ do
 
 			# if parcellation inputted, compute stats in parcellation as well
 			if [[ ! ${parc} == 'null' ]]; then
-				[ ! -f ${tmpdir}/parc_${measures}_${hemi}."${metrics}".txt ] && wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
-					-reduce ${measures} \
-					-roi ${hemi}.parc.shape.gii \
-					>> ${tmpdir}/parc_${measures}_${hemi}."${metrics}".txt
+				for KEYS in ${keys_parc}
+				do
+					if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
+						HEMI=${keys_parc::1}
+						keyname=${KEYS:2}
+					else
+						HEMI=${hemi}
+						keyname=${KEYS:3}
+					fi
+
+					if [[ ! ${keyname} == 'H' ]]; then
+						# compute in parcellation
+						wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+							-reduce ${measures} \
+							-roi ${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii >> ${tmpdir}/parc_${measures}_${hemi}."${metrics}".txt
+					fi
+				done
 			fi
 		done
 	done

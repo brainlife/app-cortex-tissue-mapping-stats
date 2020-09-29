@@ -17,15 +17,17 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 			with open('aparc_keys.txt') as aparc_keys:
 				structureList = aparc_keys.read().split()
 		else:
-			with open('parc.structurelist_lh.txt','r') as structures: 
-				structuresList_lh = structures.read().split('\n')
-				structuresList_lh = [ x for x in structuresList_lh if x ]
+			with open('parc_keys.txt') as aparc_keys:
+				structureList = parc_keys.read().split()			
+			# with open('parc.structurelist_lh.txt','r') as structures: 
+			# 	structuresList_lh = structures.read().split('\n')
+			# 	structuresList_lh = [ x for x in structuresList_lh if x ]
 
-			with open('parc.structurelist_rh.txt','r') as structures: 
-				structuresList_rh = structures.read().split('\n')
-				structuresList_rh = [ x for x in structuresList_rh if x ]
+			# with open('parc.structurelist_rh.txt','r') as structures: 
+			# 	structuresList_rh = structures.read().split('\n')
+			# 	structuresList_rh = [ x for x in structuresList_rh if x ]
 
-			structureList = structuresList_lh + structuresList_rh
+			#structureList = structuresList_lh + structuresList_rh
 		print(structureList)
 
 		# loop through summary statistic measures making one csv per parcellation and measure
@@ -43,25 +45,25 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 				print(metrics)
 				# left hemisphere
 				with open('./tmp/%s_%s_%s.%s.txt' %(parc,measures,hemispheres[0],metrics),'r') as data_f:
-					if parc == 'aparc':
-						data_lh = pd.read_csv(data_f,header=None)
-					else:
-						data_lh = data_f.read().split('\t')
-						data_lh = [ x.split('\n')[0] for x in data_lh ]
+					#if parc == 'aparc':
+					data_lh = pd.read_csv(data_f,header=None)
+					#else:
+						# data_lh = data_f.read().split('\t')
+						# data_lh = [ x.split('\n')[0] for x in data_lh ]
 
 				# right hemisphere
 				with open('./tmp/%s_%s_%s.%s.txt' %(parc,measures,hemispheres[1],metrics),'r') as data_f:
-					if parc == 'aparc':
-						data_rh = pd.read_csv(data_f,header=None)
-					else:
-						data_rh = data_f.read().split('\t')
-						data_rh = [ x.split('\n')[0] for x in data_rh ]
+					#if parc == 'aparc':
+					data_rh = pd.read_csv(data_f,header=None)
+					#else:
+					#	data_rh = data_f.read().split('\t')
+					#	data_rh = [ x.split('\n')[0] for x in data_rh ]
 
 				# merge hemisphere data
-				if parc =='aparc':
-					data = data_lh[0].tolist() + data_rh[0].tolist()
-				else:
-					data = data_lh + data_rh
+				#if parc =='aparc':
+				data = data_lh[0].tolist() + data_rh[0].tolist()
+				# else:
+				# 	data = data_lh + data_rh
 			
 				# add to dataframe
 				df[metrics] = data
