@@ -68,7 +68,7 @@ do
 				fi
 
 				if [[ "${keyname}" == *"_ROI"* ]]; then
-					keyname=`cut -d"_ROI" -f1 <<< ${keyname}`
+					keyname=`echo ${keyname%"_ROI"*}`
 				fi
 
 				if [[ ! ${keyname} == 'H' ]]; then
@@ -154,7 +154,7 @@ do
 						fi
 
 						if [[ "${keyname}" == *"_ROI"* ]]; then
-							keyname=`cut -d"_ROI" -f1 <<< ${keyname}`
+							keyname=`echo ${keyname%"_ROI"*}`
 						fi
 
 						if [[ ! ${keyname} == 'H' ]]; then
@@ -218,7 +218,7 @@ do
 						fi
 
 						if [[ "${keyname}" == *"_ROI"* ]]; then
-							keyname=`cut -d"_ROI" -f1 <<< ${keyname}`
+							keyname=`echo ${keyname%"_ROI"*}`
 						fi
 
 						if [[ ! ${keyname} == 'H' ]]; then
