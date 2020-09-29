@@ -17,7 +17,7 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 			with open('aparc_keys.txt') as aparc_keys:
 				structureList = aparc_keys.read().split()
 		else:
-			with open('parc_keys.txt') as aparc_keys:
+			with open('parc_keys.txt') as parc_keys:
 				structureList = parc_keys.read().split()			
 			# with open('parc.structurelist_lh.txt','r') as structures: 
 			# 	structuresList_lh = structures.read().split('\n')
