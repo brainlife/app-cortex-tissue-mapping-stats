@@ -47,6 +47,9 @@ do
 			${pial} \
 			${hemi}.parc.label.gii
 
+		#### set map names ####
+		wb_command -set-map-names ${hemi}.parc.label.gii -map 1 "${hemi}_parc"
+
 		#### convert gifti labels to rois ####
 		[ ! -f ${hemi}.parc.shape.gii ] && wb_command -gifti-all-labels-to-rois ${hemi}.parc.label.gii \
 			1 \
