@@ -34,9 +34,9 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 
 			# set up pandas dataframe
 			df = pd.DataFrame([],columns=columns,dtype=object)
-			df['subjectID'] = [ subjectID for x in range(len(structureList)) ]
-			df['structureID'] = [ structureList[x] for x in range(len(structureList)) ]
-			df['nodeID'] = [ 1 for x in range(len(structureList)) ]
+			df['subjectID'] = [ subjectID for x in range(len(structureList)) if not 'Medial_wall' in structureList[x] ]
+			df['structureID'] = [ structureList[x] for x in range(len(structureList)) if not 'Medial_wall' in structureList[x] ]
+			df['nodeID'] = [ 1 for x in range(len(structureList)) if not 'Medial_wall' in structureList[x] ]
 
 			# loop through diffusion measures and read in diffusion measure data. each csv will contain all diffusion measures
 			for metrics in diffusion_measures:
@@ -97,7 +97,11 @@ def main():
 	diffusion_measures = [ x.split('.')[2] for x in glob.glob('./tmp/aparc_MIN_lh.*.txt') ]
 
 	# depending on what's in the array, rearrange in a specific order I like
-	if all(x in diffusion_measures for x in ['ndi','ga']):
+	if all(x in diffusion_measures for x in ['noddi_kappa','ga']):
+		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','noddi_kappa','volume','thickness']
+	elif all(x in diffusion_measures for x in ['noddi_kappa','fa']):
+		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
+	elif all(x in diffusion_measures for x in ['ndi','ga']):
 		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','volume','thickness']
 	elif all(x in diffusion_measures for x in ['ndi','fa']):
 		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','snr','volume','thickness']
@@ -107,10 +111,6 @@ def main():
 		diffusion_measures = ['ad','fa','md','rd','snr','volume','thickness']
 	elif 'gmd' in diffusion_measures:
 		diffusion_measures = ['gmd','snr','volume','thickness']
-	elif all(x in diffusion_measures for x in ['noddi_kappa','ga']):
-		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','noddi_kappa','volume','thickness']
-	elif all(x in diffusion_measures for x in ['noddi_kappa','fa']):
-		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
 	elif 'noddi_kappa' in diffusion_measures:
 		diffusion_measures = ['ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
 	else:
