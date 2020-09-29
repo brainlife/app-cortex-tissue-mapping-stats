@@ -124,12 +124,14 @@ do
 	echo "computing statistics for ${metrics}"
 	for hemi in ${hemispheres}
 	do
+		keys=$(eval "echo \$roi_keys_${hemi}")
+
 		for measures in ${MEASURES}
 		do
 			echo ${measures}
 			for KEYS in ${keys}
 			do
-				if [[ ${keys::1} == 'L' ]] || [[ ${keys::1} == 'R' ]]; then
+				if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
 					HEMI=${keys::1}
 					keyname=${KEYS:2}
 				else
