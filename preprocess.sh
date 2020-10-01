@@ -27,7 +27,7 @@ export SUBJECTS_DIR="./"
 rois="./rois/"
 
 # copy cortexmap
-[ ! -d ./cortexmap/ ] && cp -R +w ${cortexmap} ./cortexmap/ && chmod -R +w ./cortexmap/
+[ ! -d ./cortexmap/ ] && cp -R ${cortexmap} ./cortexmap/ && chmod -R +w ./cortexmap/
 cortexmap="./cortexmap/"
 funcdir="${cortexmap}/func"
 
