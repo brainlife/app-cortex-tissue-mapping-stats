@@ -24,7 +24,7 @@ time singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./generateCSV.p
 if [ -f ./parc-stats/tracts_STDEV.csv ]; then
 	mkdir raw
 	mv rois/ parcellation-surface/ resliced/ *.txt ./tmp/*.txt ./raw/
-	rm -rf tmp output
+	rm -rf tmp output cortexmap
 	echo "complete"
 	exit 0
 else
