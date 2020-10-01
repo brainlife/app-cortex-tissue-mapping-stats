@@ -16,18 +16,18 @@ resliced="./resliced/"
 tmpdir="./tmp/"
 
 # copy freesurfer directory here
-[ ! -d ./output/ ] && cp -R ${freesurfer} ./
+[ ! -d ./output/ ] && cp -R +w ${freesurfer} ./
 freesurfer="./output"
 
 # export subjects dir for mri_vol2surf call
 export SUBJECTS_DIR="./"
 
 # copy rois directory
-[ ! -d ./rois/ ] && cp -R ${rois} ./rois/
+[ ! -d ./rois/ ] && cp -R +w ${rois} ./rois/
 rois="./rois/"
 
 # copy cortexmap
-[ ! -d ./cortexmap/ ] && cp -R ${cortexmap} ./cortexmap/
+[ ! -d ./cortexmap/ ] && cp -R +w ${cortexmap} ./cortexmap/
 cortexmap="./cortexmap/"
 funcdir="${cortexmap}/func"
 
