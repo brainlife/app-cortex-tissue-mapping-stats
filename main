@@ -3,28 +3,31 @@
 #PBS -l nodes=1:ppn=1
 #PBS -l vmem=8gb
 #PBS -l walltime=3:30:00
-#PBS -N app-cortex-mapping-stats
+#PBS -N app-endpoint-mapping-stats
 #PBS -V
 
-set -e
+#set -x
 
 # copy license and export path for freesurfer
 [ -z "$FREESURFER_LICENSE" ] && echo "Please set FREESURFER_LICENSE in .bashrc" && exit 1;
 echo $FREESURFER_LICENSE > license.txt
 
-# convert surfaces and generate appropriate summary statistic text files
+# preprocess
+time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/freesurfer:7.0.0 ./preprocess.sh
+
+# generate appropriate summary statistic text files
 time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/connectome_workbench:1.4.2b ./compute-stats.sh
 
 # generate csv's for each statistic that can be useful in MLC analyses
 time singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./generateCSV.py
 
-if [ -f ./parc-stats/aparc_STDEV.csv ]; then
+if [ -f ./parc-stats/tracts_STDEV.csv ]; then
 	mkdir raw
-	mv aparc-rois/ *.txt ./tmp/*.txt *.gii ./raw/
+	mv rois/ parcellation-surface/ resliced/ *.txt ./tmp/*.txt ./raw/
 	rm -rf tmp
 	echo "complete"
-	exit 0
+	#exit 0
 else
 	echo "stats computations failed somewhere. please check logs and derivatives"
-	exit 1
+	#exit 1
 fi
