@@ -11,6 +11,7 @@ freesurfer="./output"
 rois="./rois/"
 cortexmap="./cortexmap/"
 funcdir="${cortexmap}/func"
+surfdir="${cortexmap}/surf"
 
 # export subjects dir for mri_vol2surf call
 export SUBJECTS_DIR="./"
@@ -38,6 +39,7 @@ do
 	
 	for hemi in ${HEMI}
 	do
+		echo ${hemi}.${name::-7} >> endpoints_key.txt
 		metrics=($(eval "echo \${METRICS_${hemi}[*]}"))
 		for METRICS in ${metrics[*]}
 		do
@@ -50,7 +52,25 @@ do
 				fi
 				if [ $? -eq 0 ]; then
 					echo ${value} >> ${tmpdir}/tracts_${measures}_"${metrics_name::-9}".txt
-					echo ${hemi}.${name::-7} >> endpoints_key.txt
+				else
+					echo "NaN" >> ${tmpdir}/tracts_${measures}_"${metrics_name::-9}".txt
+				fi
+			done
+		done
+
+		# thickness and volume
+		metrics="volume thickness"
+		for metrics in ${METRICS}
+		do
+			for measures in ${MEASURES}
+			do
+				if [[ ${weight} == 'false' ]]; then
+					value=`eval 'wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii -reduce ${measures} -roi ./parcellation-surface/${hemi}.${name::-7}.func.gii'`
+				fi
+				if [ $? -eq 0 ]; then
+					echo ${value} >> ${tmpdir}/tracts_${measures}_"${metrics}".txt
+				else
+					echo "NaN" >> ${tmpdir}/tracts_${measures}_"${metrics}".txt
 				fi
 			done
 		done
