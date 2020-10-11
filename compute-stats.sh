@@ -68,9 +68,9 @@ do
 					value=`eval 'wb_command -metric-stats ${surfdir}/${hemi}.${METRICS}.shape.gii -reduce ${measures} -roi ./parcellation-surface/${hemi}.${name::-7}.func.gii'`
 				fi
 				if [ $? -eq 0 ]; then
-					echo ${value} >> ${tmpdir}/tracts_${measures}_"${METRICS}".txt
+					echo ${value} >> ${tmpdir}/tracts_${measures}_${hemi}."${METRICS}".txt
 				else
-					echo "NaN" >> ${tmpdir}/tracts_${measures}_"${METRICS}".txt
+					echo "NaN" >> ${tmpdir}/tracts_${measures}_${hemi}."${METRICS}".txt
 				fi
 			done
 		done
