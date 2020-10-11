@@ -60,17 +60,17 @@ do
 
 		# thickness and volume
 		metrics="volume thickness"
-		for metrics in ${METRICS}
+		for METRICS in ${metrics}
 		do
 			for measures in ${MEASURES}
 			do
 				if [[ ${weight} == 'false' ]]; then
-					value=`eval 'wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii -reduce ${measures} -roi ./parcellation-surface/${hemi}.${name::-7}.func.gii'`
+					value=`eval 'wb_command -metric-stats ${surfdir}/${hemi}.${METRICS}.shape.gii -reduce ${measures} -roi ./parcellation-surface/${hemi}.${name::-7}.func.gii'`
 				fi
 				if [ $? -eq 0 ]; then
-					echo ${value} >> ${tmpdir}/tracts_${measures}_"${metrics}".txt
+					echo ${value} >> ${tmpdir}/tracts_${measures}_"${METRICS}".txt
 				else
-					echo "NaN" >> ${tmpdir}/tracts_${measures}_"${metrics}".txt
+					echo "NaN" >> ${tmpdir}/tracts_${measures}_"${METRICS}".txt
 				fi
 			done
 		done
