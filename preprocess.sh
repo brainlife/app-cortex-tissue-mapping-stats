@@ -5,9 +5,6 @@ aparc=`jq -r '.aparc' config.json`
 rois=`jq -r '.rois' config.json`
 freesurfer=`jq -r '.freesurfer' config.json`
 reslice=`jq -r '.reslice' config.json`
-cortexmap=`jq -r '.cortexmap' config.json`
-weight=`jq -r '.weight' config.json`
-weighting_alg=`jq -r '.weighting_alg' config.json`
 hemi="lh rh"
 
 # make output directory
@@ -25,11 +22,6 @@ export SUBJECTS_DIR="./"
 # copy rois directory
 [ ! -d ./rois/ ] && cp -R ${rois} ./rois/ && chmod -R +w ./rois/
 rois="./rois/"
-
-# copy cortexmap
-[ ! -d ./cortexmap/ ] && cp -R ${cortexmap} ./cortexmap/ && chmod -R +w ./cortexmap/
-cortexmap="./cortexmap/"
-funcdir="${cortexmap}/func"
 
 # convert aparc
 [ ! -f ./${aparc}+aseg.nii.gz ] && mri_convert ${freesurfer}/mri/${aparc}+aseg.mgz ./${aparc}+aseg.nii.gz
@@ -74,9 +66,3 @@ do
 		[ ! -f ./parcellation-surface/${hemi}.${name::-7}.func.gii ] && mri_vol2surf --src ${resliced}/${name} --hemi ${hemi} --surf white.surf.gii --regheader output --out ./parcellation-surface/${hemi}.${name::-7}.func.gii --projdist-max 0 6 .1
 	done
 done
-
-
-
-
-
-

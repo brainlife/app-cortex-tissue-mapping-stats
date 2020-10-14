@@ -65,27 +65,10 @@ def main():
 	diffusion_measures = [ x.split('.')[2] for x in glob.glob('./tmp/tracts_MIN_lh.*.txt') ]
 
 	# depending on what's in the array, rearrange in a specific order I like
-	if all(x in diffusion_measures for x in ['noddi_kappa','ga']):
-		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
-	elif all(x in diffusion_measures for x in ['noddi_kappa','fa']):
-		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
-	elif all(x in diffusion_measures for x in ['ndi','ga']):
-		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','snr','volume','thickness']
-	elif all(x in diffusion_measures for x in ['ndi','fa']):
-		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','snr','volume','thickness']
-	elif 'ga' in diffusion_measures:
-		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','volume','thickness']
-	elif 'fa' in diffusion_measures:
-		diffusion_measures = ['ad','fa','md','rd','snr','volume','thickness']
-	elif 'gmd' in diffusion_measures:
-		diffusion_measures = ['gmd','snr']
-	elif 'noddi_kappa' in diffusion_measures:
-		diffusion_measures = ['ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
-	else:
-		diffusion_measures = ['ndi','isovf','odi','snr','volume','thickness']
+	diffusion_measures = ['volume','thickness']
 
 	# summary statistics measures
-	summary_measures = [ x.split('.')[1].split('tracts_')[1].split('_lh')[0] for x in glob.glob('./tmp/tracts_*_lh.%s.txt' %diffusion_measures[0]) ]
+	summary_measures = [ x.split('.')[1].split('tracts_')[1].split('_lh')[0] for x in glob.glob('./tmp/rois_*_lh.%s.txt' %diffusion_measures[0]) ]
 	
 	# set columns for pandas array
 	columns = ['subjectID','structureID','nodeID'] + diffusion_measures
