@@ -104,8 +104,13 @@ roi_keys_lh=$(wb_command -file-information lh.aparc.shape.gii -only-map-names)
 roi_keys_rh=$(wb_command -file-information rh.aparc.shape.gii -only-map-names)
 
 #### hippocampus parcellation in glasser atlas (hcp-mmp-b) is troublesome. need to loop through number of maps to skip this, or else the metric-stats function fails
-roi_keys_lh_parc=$(wb_command -file-information lh.parc.shape.gii -only-map-names)
-roi_keys_rh_parc=$(wb_command -file-information rh.parc.shape.gii -only-map-names)
+if [[ ${parc} == 'null' ]]; then
+	roi_keys_lh_parc=""
+	roi_keys_rh_parc=""
+else
+	roi_keys_lh_parc=$(wb_command -file-information lh.parc.shape.gii -only-map-names)
+	roi_keys_rh_parc=$(wb_command -file-information rh.parc.shape.gii -only-map-names)
+fi
 
 #### compute MIN MAX MEAN MEDIAN MODE STDEV SAMPSTDEV COUNT_NONZERO of each metric per roi: diffusion measures ####
 for metrics in ${METRICS[*]}
