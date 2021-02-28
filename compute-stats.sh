@@ -25,7 +25,7 @@ do
 	for i in ${pial}
 	do
 		if [[ ! "${i}" == *"inflated"* ]]; then
-			lh_pial=${i}
+			${hemi}_pial=${i}
 		fi
 	done
 done
