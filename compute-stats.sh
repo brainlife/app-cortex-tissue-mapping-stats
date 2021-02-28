@@ -18,18 +18,6 @@ rh_pial=${rh_vertices}/rh.pial*.gii
 # hemispheres
 hemispheres="lh rh"
 
-# check if inflated pial exists
-for hemi in ${hemispheres}
-do
-	pial=$(eval "echo \$${hemi}_pial")
-	for i in ${pial}
-	do
-		if [[ ! "${i}" == *"inflated"* ]]; then
-			${hemi}_pial=${i}
-		fi
-	done
-done
-
 # filepaths
 cp -R ${cortexmap} ./cortexmap/
 cortexmap="./cortexmap/"
@@ -54,6 +42,14 @@ do
 	echo "converting files for ${hemi}"
 	parc=$(eval "echo \$${hemi}_annot")
 	pial=$(eval "echo \$${hemi}_pial")
+	
+	# check if inflated pial exists
+	for i in ${pial}
+	do
+		if [[ ! "${i}" == *"inflated"* ]]; then
+			pial=${i}
+		fi
+	done
 
 	# convert surface parcellations that came from multi atlas transfer tool
 	if [[ ! ${parc} == 'null' ]]; then
