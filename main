@@ -8,6 +8,8 @@
 
 set -e
 
+[ ! -d ./parc-stats ] && mkdir -p ./parc-stats
+
 # copy license and export path for freesurfer
 [ -z "$FREESURFER_LICENSE" ] && echo "Please set FREESURFER_LICENSE in .bashrc" && exit 1;
 echo $FREESURFER_LICENSE > license.txt
