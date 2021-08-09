@@ -20,7 +20,7 @@ time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt 
 # generate csv's for each statistic that can be useful in MLC analyses
 time singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./generateCSV.py
 
-if [ -f ./parc-stats/aparc_STDEV.csv ]; then
+if [ -f ./parc-stats/parc-stats/aparc_STDEV.csv ]; then
 	mkdir raw
 	mv aparc-rois/ *.txt ./tmp/*.txt *.gii ./raw/
 	rm -rf tmp
