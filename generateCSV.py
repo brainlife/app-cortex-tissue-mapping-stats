@@ -115,6 +115,8 @@ def main():
 		diffusion_measures = ['gmd','volume','thickness']
 	elif 'myelinmap' in diffusion_measures:
 		diffusion_measures = ['myelinmap','volume','thickness']
+	elif 'T1' in diffusion_measures:
+		diffusion_measures = diffusion_measures
 	elif 'noddi_kappa' in diffusion_measures:
 		diffusion_measures = ['ndi','isovf','odi','noddi_kappa','volume','thickness']
 	else:
