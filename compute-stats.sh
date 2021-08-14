@@ -89,7 +89,7 @@ do
 	fi
 
 	# convert freesurfer aparc labels from cortexmapping app
-	[ ! -f ${hemi}.aparc.shape.gii ] && wb_command -gifti-all-labels-to-rois ${labeldir}/${hemi}.aparc.*.native.label.gii \
+	[ ! -f ${hemi}.aparc.shape.gii ] && wb_command -gifti-all-labels-to-rois ${labeldir}/${hemi}.aparc.*.*.label.gii \
 		1 \
 		${hemi}.aparc.shape.gii
 
