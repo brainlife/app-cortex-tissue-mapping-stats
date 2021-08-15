@@ -128,6 +128,8 @@ do
 	hemi="${metrics::2}"
 	keys=$(eval "echo \$roi_keys_${hemi}")
 	keys_parc=$(eval "echo \$roi_keys_${hemi}_parc")
+	aparc_map=(`wb_command -file-information ${labeldir}/${hemi}.aparc.*.*.label.gii -only-map-names`)
+	parc_map=(`wb_command -file-information ${hemi}.parc.label.gii -only-map-names`)
 
 	if [[ ! ${metrics:3} == 'goodvertex.func.gii' ]]; then
 		echo "computing measures for ${metrics}"
@@ -146,7 +148,7 @@ do
 
 				if [[ ! ${keyname} == 'Medial_wall' ]]; then
 					[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.aparc.*.*.label.gii \
-						./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii -name "${KEYS}" -map "${hemi}_aparc.a2009s"
+						./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii -name "${KEYS}" -map "${aparc_map}"
 
 					# compute in freesurfer parcellation
 					wb_command -metric-stats ${funcdir}/${metrics} \
@@ -174,7 +176,7 @@ do
 
 						if [[ ! ${keyname} == 'H' ]]; then
 							[ ! -f ${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${hemi}.parc.label.gii \
-								${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii -name "${KEYS}" -map "${hemi}_parc"
+								${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii -name "${KEYS}" -map "${parc_map}"
 
 							# compute in freesurfer parcellation
 							wb_command -metric-stats ${funcdir}/${metrics} \
