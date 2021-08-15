@@ -145,7 +145,7 @@ do
 				fi
 
 				if [[ ! ${keyname} == 'Medial_wall' ]]; then
-					[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.aparc.*.native.label.gii \
+					[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.aparc.*.*.label.gii \
 						./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii -name "${KEYS}" -map "${hemi}_aparc.a2009s"
 
 					# compute in freesurfer parcellation
