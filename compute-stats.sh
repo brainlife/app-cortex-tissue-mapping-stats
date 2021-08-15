@@ -129,7 +129,6 @@ do
 	keys=$(eval "echo \$roi_keys_${hemi}")
 	keys_parc=$(eval "echo \$roi_keys_${hemi}_parc")
 	aparc_map=(`wb_command -file-information ${labeldir}/${hemi}.aparc.*.*.label.gii -only-map-names`)
-	parc_map=(`wb_command -file-information ${hemi}.parc.label.gii -only-map-names`)
 
 	if [[ ! ${metrics:3} == 'goodvertex.func.gii' ]]; then
 		echo "computing measures for ${metrics}"
@@ -159,6 +158,8 @@ do
 
 			# if parcellation inputted, compute stats in parcellation as well
 			if [[ ! ${parc} == 'null' ]]; then
+				parc_map=(`wb_command -file-information ${hemi}.parc.label.gii -only-map-names`)
+
 				for KEYS in ${keys_parc}
 				do
 					if [[ ! ${KEYS} == 'unknown_0' ]]; then
