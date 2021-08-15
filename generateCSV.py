@@ -99,28 +99,28 @@ def main():
 	diffusion_measures = [ x.split('.')[2] for x in glob.glob('./tmp/aparc_MIN_lh.*.txt') ]
 
 	# depending on what's in the array, rearrange in a specific order I like
-	if all(x in diffusion_measures for x in ['noddi_kappa','ga']):
-		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
-	elif all(x in diffusion_measures for x in ['noddi_kappa','fa']):
-		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
-	elif all(x in diffusion_measures for x in ['ndi','ga']):
-		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','snr','volume','thickness']
-	elif all(x in diffusion_measures for x in ['ndi','fa']):
-		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','snr','volume','thickness']
-	elif 'ga' in diffusion_measures:
-		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','snr','volume','thickness']
-	elif 'fa' in diffusion_measures:
-		diffusion_measures = ['ad','fa','md','rd','snr','volume','thickness']
-	elif 'gmd' in diffusion_measures:
-		diffusion_measures = ['gmd','snr','volume','thickness']
-	elif 'myelinmap' in diffusion_measures:
-		diffusion_measures = ['myelinmap','snr','volume','thickness']
-	elif 'T1' in diffusion_measures:
-		diffusion_measures = diffusion_measures
-	elif 'noddi_kappa' in diffusion_measures:
-		diffusion_measures = ['ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
-	else:
-		diffusion_measures = ['ndi','isovf','odi','snr','volume','thickness']
+# 	if all(x in diffusion_measures for x in ['noddi_kappa','ga']):
+# 		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
+# 	elif all(x in diffusion_measures for x in ['noddi_kappa','fa']):
+# 		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
+# 	elif all(x in diffusion_measures for x in ['ndi','ga']):
+# 		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','snr','volume','thickness']
+# 	elif all(x in diffusion_measures for x in ['ndi','fa']):
+# 		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','snr','volume','thickness']
+# 	elif 'ga' in diffusion_measures:
+# 		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','snr','volume','thickness']
+# 	elif 'fa' in diffusion_measures:
+# 		diffusion_measures = ['ad','fa','md','rd','snr','volume','thickness']
+# 	elif 'gmd' in diffusion_measures:
+# 		diffusion_measures = ['gmd','snr','volume','thickness']
+# 	elif 'myelinmap' in diffusion_measures:
+# 		diffusion_measures = ['myelinmap','snr','volume','thickness']
+# 	elif 'T1' in diffusion_measures:
+# 		diffusion_measures = diffusion_measures
+# 	elif 'noddi_kappa' in diffusion_measures:
+# 		diffusion_measures = ['ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
+# 	else:
+# 		diffusion_measures = ['ndi','isovf','odi','snr','volume','thickness']
 
 	# summary statistics measures
 	summary_measures = [ x.split('.')[1].split('aparc_')[1].split('_lh')[0] for x in glob.glob('./tmp/aparc_*_lh.%s.txt' %diffusion_measures[0]) ]
