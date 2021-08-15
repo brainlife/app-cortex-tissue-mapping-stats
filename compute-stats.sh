@@ -195,59 +195,61 @@ done
 METRICS="volume thickness"
 for metrics in ${METRICS}
 do
-	echo "computing statistics for ${metrics}"
-	for hemi in ${hemispheres}
-	do
-		keys=$(eval "echo \$roi_keys_${hemi}")
-		keys_parc=$(eval "echo \$roi_keys_${hemi}_parc")
-
-		for measures in ${MEASURES}
+	if [ -f ${surfdir}/${hemi}.${metrics}.shape.gii ]; then
+		echo "computing statistics for ${metrics}"
+		for hemi in ${hemispheres}
 		do
-			echo ${measures}
-			for KEYS in ${keys}
+			keys=$(eval "echo \$roi_keys_${hemi}")
+			keys_parc=$(eval "echo \$roi_keys_${hemi}_parc")
+
+			for measures in ${MEASURES}
 			do
-				if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
-					HEMI=${KEYS::1}
-					keyname=${KEYS:2}
-				else
-					HEMI=${hemi}
-					keyname=${KEYS:3}
-				fi
-
-				if [[ ! ${keyname} == 'Medial_wall' ]]; then
-					# compute in freesurfer parcellation
-					wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
-						-reduce ${measures} \
-						-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
-				fi
-			done
-
-			# if parcellation inputted, compute stats in parcellation as well
-			if [[ ! ${parc} == 'null' ]]; then
-				for KEYS in ${keys_parc}
+				echo ${measures}
+				for KEYS in ${keys}
 				do
-					if [[ ! ${KEYS} == 'unknown_0' ]]; then
-						if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
-							HEMI=${KEYS::1}
-							keyname=${KEYS:2}
-						else
-							HEMI=${hemi}
-							keyname=${KEYS:3}
-						fi
+					if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
+						HEMI=${KEYS::1}
+						keyname=${KEYS:2}
+					else
+						HEMI=${hemi}
+						keyname=${KEYS:3}
+					fi
 
-						if [[ "${keyname}" == *"_ROI"* ]]; then
-							keyname=`echo ${keyname%"_ROI"*}`
-						fi
-
-						if [[ ! ${keyname} == 'H' ]]; then
-							# compute in parcellation
-							wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
-								-reduce ${measures} \
-								-roi ${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii >> ${tmpdir}/parc_${measures}_${hemi}."${metrics}".txt
-						fi
+					if [[ ! ${keyname} == 'Medial_wall' ]]; then
+						# compute in freesurfer parcellation
+						wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+							-reduce ${measures} \
+							-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
 					fi
 				done
-			fi
+
+				# if parcellation inputted, compute stats in parcellation as well
+				if [[ ! ${parc} == 'null' ]]; then
+					for KEYS in ${keys_parc}
+					do
+						if [[ ! ${KEYS} == 'unknown_0' ]]; then
+							if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
+								HEMI=${KEYS::1}
+								keyname=${KEYS:2}
+							else
+								HEMI=${hemi}
+								keyname=${KEYS:3}
+							fi
+
+							if [[ "${keyname}" == *"_ROI"* ]]; then
+								keyname=`echo ${keyname%"_ROI"*}`
+							fi
+
+							if [[ ! ${keyname} == 'H' ]]; then
+								# compute in parcellation
+								wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+									-reduce ${measures} \
+									-roi ${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii >> ${tmpdir}/parc_${measures}_${hemi}."${metrics}".txt
+							fi
+						fi
+					done
+				fi
+			done
 		done
-	done
+	fi
 done
