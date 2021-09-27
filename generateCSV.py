@@ -80,7 +80,7 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 		
 		# grab desired csv for validator and save as cortical.csv	
 		cortical_df = pd.read_csv('./%s/%s.csv' %(outdir,cortical_csv))
-		cortical_df.to_csv('./%s/cortical.csv' %outdir, index=False)
+		cortical_df.to_csv('./%s/cortex.csv' %outdir, index=False)
 
 
 def main():
