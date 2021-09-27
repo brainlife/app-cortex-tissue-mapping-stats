@@ -7,7 +7,7 @@ import numpy as np
 import os, sys, argparse
 import glob
 
-def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,hemispheres,parcellations,outdir):
+def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,hemispheres,parcellations,cortical_csv,outdir):
 	#### loop through summary measures and make csvs for each. these can be used in MLC analyses ####
 	for parc in parcellations:
 		print(parc)
@@ -77,6 +77,11 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 
 			# write out to csv
 			df.to_csv('./%s/%s_%s.csv' %(outdir,parc,measures), index=False)
+		
+		# grab desired csv for validator and save as cortical.csv	
+		cortical_df = pd.read_csv('./%s/%s.csv' %(outdir,cortical_csv))
+		cortical_df.to_csv('./%s/cortical.csv' %outdir, index=False)
+
 
 def main():
 
@@ -87,6 +92,7 @@ def main():
 
 	#### parse inputs ####
 	subjectID = config['_inputs'][0]['meta']['subject']
+	cortical_csv = config['validator_csv']
   
 	# set parcellations
 	if 'lh_annot' in list(config.keys()):
@@ -143,7 +149,7 @@ def main():
 
 	#### run command to generate csv structures ####
 	print("generating csvs")
-	generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,hemispheres,parcellations,outdir)
+	generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,hemispheres,parcellations,cortical_csv,outdir)
 
 if __name__ == '__main__':
 	main()
