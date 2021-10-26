@@ -121,7 +121,7 @@ def main():
 	hemispheres = ['lh','rh']
 	
 	# set outdir
-	outdir = 'parc-stats'
+	outdir = 'parc-stats/parc-stats'
 	
 	# generate output directory if not already there
 	if os.path.isdir(outdir):
