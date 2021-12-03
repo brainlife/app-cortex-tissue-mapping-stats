@@ -16,7 +16,7 @@ resliced="./resliced/"
 tmpdir="./tmp/"
 
 # copy freesurfer directory here
-[ ! -d ./output/ ] && cp -R ${freesurfer} ./ && chmod -R +w ./output
+[ ! -d ./output/ ] && cp -R ${freesurfer} ./ && chmod -R +rw ./output
 freesurfer="./output"
 
 # export subjects dir for mri_vol2surf call
