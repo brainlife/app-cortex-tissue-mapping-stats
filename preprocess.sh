@@ -16,7 +16,7 @@ resliced="./resliced/"
 tmpdir="./tmp/"
 
 # copy freesurfer directory here
-[ ! -d ./output/ ] && cp -R ${freesurfer} ./output ./ && chmod -R +w ./output
+[ ! -d ./output/ ] && cp -R ${freesurfer} ./output && chmod -R +w ./output
 freesurfer="./output"
 
 # export subjects dir for mri_vol2surf call
@@ -37,8 +37,8 @@ funcdir="${cortexmap}/func"
 # convert surfaces
 for HEMI in ${hemi}
 do
-	[ ! -f ${freesurfer}/surf/${HEMI}.pial.surf.gii ] && cp ${cortexmap}/surf/${HEMI}.pial.surf.gii ${freesurfer}/surf/${HEMI}.pial.surf.gii
-	[ ! -f ${freesurfer}/surf/${HEMI}.white.surf.gii ] && cp ${cortexmap}/surf/${HEMI}.white.surf.gii ${freesurfer}/surf/${HEMI}.white.surf.gii
+	[ ! -f ${freesurfer}/surf/${HEMI}.pial.surf.gii ] && cp ${cortexmap}/surf/${HEMI}.pial.surf.gii ${freesurfer}/surf/
+	[ ! -f ${freesurfer}/surf/${HEMI}.white.surf.gii ] && cp ${cortexmap}/surf/${HEMI}.white.surf.gii ${freesurfer}/surf/
 done
 
 # reslice rois
@@ -74,9 +74,3 @@ do
 		[ ! -f ./parcellation-surface/${hemi}.${name::-7}.func.gii ] && mri_vol2surf --src ${resliced}/${name} --hemi ${hemi} --surf white.surf.gii --regheader output --out ./parcellation-surface/${hemi}.${name::-7}.func.gii --projdist-max 0 6 .1
 	done
 done
-
-
-
-
-
-
