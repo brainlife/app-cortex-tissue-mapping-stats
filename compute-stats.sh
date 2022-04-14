@@ -113,7 +113,7 @@ do
 				echo ${KEYS} >> aparc_keys.txt
 			fi
 		else
-			if [[ ! ${keyname} == 'bankssts' ]]; then
+			if [[ ! ${keyname} == 'bankssts' ]] && [[ ! ${keyname} == 'corpuscallosum' ]] && [[ ! ${keyname} == 'frontalpole' ]] && [[ ! ${keyname} == 'temporalpole' ]]; then
 				echo ${KEYS} >> aparc_keys.txt
 			fi
 		fi
@@ -176,7 +176,7 @@ do
 							-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_"${metrics::-9}".txt
 					fi
 				else
-					if [[ ! ${keyname} == 'bankssts' ]]; then
+					if [[ ! ${keyname} == 'bankssts' ]] && [[ ! ${keyname} == 'corpuscallosum' ]] && [[ ! ${keyname} == 'frontalpole' ]] && [[ ! ${keyname} == 'temporalpole' ]]; then
 						[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.${aparc_to_use}.native.label.gii \
 							./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii -name "${KEYS}" -map "${aparc_map}"
 
@@ -262,7 +262,7 @@ do
 								-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
 						fi
 					else
-						if [[ ! ${keyname} == 'bankssts' ]]; then
+						if [[ ! ${keyname} == 'bankssts' ]] && [[ ! ${keyname} == 'corpuscallosum' ]] && [[ ! ${keyname} == 'frontalpole' ]] && [[ ! ${keyname} == 'temporalpole' ]]; then
 							# compute in freesurfer parcellation
 							wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
 								-reduce ${measures} \
