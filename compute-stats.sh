@@ -103,9 +103,19 @@ do
 		else
 			keyname=${KEYS:3}
 		fi
-
-		if [[ ! ${keyname} == 'Medial_wall' ]]; then
-			echo ${KEYS} >> aparc_keys.txt
+		
+		if [[ ${aparc_to_use} == 'aparc.a2009s' ]]; then
+			if [[ ! ${keyname} == 'Medial_Wall' ]]; then
+				echo ${KEYS} >> aparc_keys.txt
+			fi
+		elif [[ ${aparc_to_use} == 'aparc' ]]; then
+			if [[ ! ${keyname} == 'bankssts' ]]; then
+				echo ${KEYS} >> aparc_keys.txt
+			fi
+		else
+			if [[ ! ${keyname} == 'corpuscallosum' ]]; then
+				echo ${KEYS} >> aparc_keys.txt
+			fi
 		fi
 	done
 done
@@ -216,11 +226,27 @@ do
 						keyname=${KEYS:3}
 					fi
 
-					if [[ ! ${keyname} == 'Medial_wall' ]]; then
-						# compute in freesurfer parcellation
-						wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
-							-reduce ${measures} \
-							-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
+					if [[ ${aparc_to_use} == 'aparc.a2009s' ]]; then
+						if [[ ! ${keyname} == 'Medial_wall' ]]; then
+							# compute in freesurfer parcellation
+							wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+								-reduce ${measures} \
+								-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
+						fi
+					elif [[ ${aparc_to_use} == 'aparc' ]]; then
+						if [[ ! ${keyname} == 'bankssts' ]]; then
+							# compute in freesurfer parcellation
+							wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+								-reduce ${measures} \
+								-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
+						fi
+					else
+						if [[ ! ${keyname} == 'corpuscallosum' ]]; then
+							# compute in freesurfer parcellation
+							wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+								-reduce ${measures} \
+								-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
+						fi
 					fi
 				done
 
