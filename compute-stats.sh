@@ -10,10 +10,8 @@ set -e
 cortexmap=`jq -r '.cortexmap' config.json`
 lh_annot=`jq -r '.lh_annot' config.json`
 rh_annot=`jq -r '.rh_annot' config.json`
-lh_vertices=`jq -r '.left' config.json`
-rh_vertices=`jq -r '.right' config.json`
-lh_pial=${lh_vertices}/lh.pial*.gii
-rh_pial=${rh_vertices}/rh.pial*.gii
+lh_pial=`jq -r '.lh_pial_surf' config.json`
+rh_pial=`jq -r '.rh_pial_surf' config.json`
 aparc_to_use=`jq -r '.fsaparc' config.json`
 
 # hemispheres
@@ -147,7 +145,7 @@ do
 				fi
 
 				if [[ ! ${keyname} == 'Medial_wall' ]]; then
-					[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.${aparc_to_use}.*.*.label.gii \
+					[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.${aparc_to_use}.*.label.gii \
 						./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii -name "${KEYS}" -map "${aparc_map}"
 
 					# compute in freesurfer parcellation
