@@ -14,6 +14,7 @@ lh_vertices=`jq -r '.left' config.json`
 rh_vertices=`jq -r '.right' config.json`
 lh_pial=${lh_vertices}/lh.pial*.gii
 rh_pial=${rh_vertices}/rh.pial*.gii
+aparc_to_use=`jq -r '.fsaparc' config.json`
 
 # hemispheres
 hemispheres="lh rh"
@@ -42,7 +43,7 @@ do
 	echo "converting files for ${hemi}"
 	parc=$(eval "echo \$${hemi}_annot")
 	pial=$(eval "echo \$${hemi}_pial")
-	
+
 	# check if inflated pial exists
 	for i in ${pial}
 	do
@@ -89,7 +90,7 @@ do
 	fi
 
 	# convert freesurfer aparc labels from cortexmapping app
-	[ ! -f ${hemi}.aparc.shape.gii ] && wb_command -gifti-all-labels-to-rois ${labeldir}/${hemi}.aparc.*.*.label.gii \
+	[ ! -f ${hemi}.aparc.shape.gii ] && wb_command -gifti-all-labels-to-rois ${labeldir}/${hemi}.${aparc_to_use}.*.label.gii \
 		1 \
 		${hemi}.aparc.shape.gii
 
@@ -128,7 +129,7 @@ do
 	hemi="${metrics::2}"
 	keys=$(eval "echo \$roi_keys_${hemi}")
 	keys_parc=$(eval "echo \$roi_keys_${hemi}_parc")
-	aparc_map=(`wb_command -file-information ${labeldir}/${hemi}.aparc.*.*.label.gii -only-map-names`)
+	aparc_map=(`wb_command -file-information ${labeldir}/${hemi}.${aparc_to_use}.*.label.gii -only-map-names`)
 
 	if [[ ! ${metrics:3} == 'goodvertex.func.gii' ]]; then
 		echo "computing measures for ${metrics}"
@@ -146,7 +147,7 @@ do
 				fi
 
 				if [[ ! ${keyname} == 'Medial_wall' ]]; then
-					[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.aparc.*.*.label.gii \
+					[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.${aparc_to_use}.*.*.label.gii \
 						./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii -name "${KEYS}" -map "${aparc_map}"
 
 					# compute in freesurfer parcellation

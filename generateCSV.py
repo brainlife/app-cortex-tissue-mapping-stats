@@ -13,17 +13,17 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 		print(parc)
 
 		# identify structure names from files. because of medial wall in aparc.a2009s, have to do in this weird way
-		if parc == 'aparc':
+		if 'aparc' in parc:
 			with open('aparc_keys.txt') as aparc_keys:
 				structureList = aparc_keys.read().split()
 		else:
 			with open('parc_keys.txt') as parc_keys:
-				structureList = parc_keys.read().split()			
-			# with open('parc.structurelist_lh.txt','r') as structures: 
+				structureList = parc_keys.read().split()
+			# with open('parc.structurelist_lh.txt','r') as structures:
 			# 	structuresList_lh = structures.read().split('\n')
 			# 	structuresList_lh = [ x for x in structuresList_lh if x ]
 
-			# with open('parc.structurelist_rh.txt','r') as structures: 
+			# with open('parc.structurelist_rh.txt','r') as structures:
 			# 	structuresList_rh = structures.read().split('\n')
 			# 	structuresList_rh = [ x for x in structuresList_rh if x ]
 
@@ -64,10 +64,10 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 				data = data_lh[0].tolist() + data_rh[0].tolist()
 				# else:
 				# 	data = data_lh + data_rh
-			
+
 				# add to dataframe
 				df[metrics] = data
-				
+
 				# handle scaling issues
 				if np.nanmedian(df[metrics].astype(np.float)) < 0.01:
 					df[metrics] = df[metrics].astype(np.float) * 1000
@@ -77,8 +77,8 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 
 			# write out to csv
 			df.to_csv('./%s/%s_%s.csv' %(outdir,parc,measures), index=False)
-		
-		# grab desired csv for validator and save as cortical.csv	
+
+		# grab desired csv for validator and save as cortical.csv
 		cortical_df = pd.read_csv('./%s/%s.csv' %(outdir,cortical_csv))
 		cortical_df.to_csv('./%s/cortex.csv' %outdir, index=False)
 
@@ -93,12 +93,13 @@ def main():
 	#### parse inputs ####
 	subjectID = config['_inputs'][0]['meta']['subject']
 	cortical_csv = config['validator_csv']
-  
+	aparc_to_use = config['fsaparc']
+
 	# set parcellations
 	if 'lh_annot' in list(config.keys()):
-		parcellations = ['aparc','parc']
+		parcellations = [aparc_to_use,'parc']
 	else:
-		parcellations = ['aparc']
+		parcellations = [aparc_to_use]
 
 	#### set up other inputs ####
 	# grab diffusion measures from file names
@@ -130,16 +131,16 @@ def main():
 
 	# summary statistics measures
 	summary_measures = [ x.split('.')[1].split('aparc_')[1].split('_lh')[0] for x in glob.glob('./tmp/aparc_*_lh.%s.txt' %diffusion_measures[0]) ]
-	
+
 	# set columns for pandas array
 	columns = ['subjectID','structureID','nodeID'] + diffusion_measures
-	
+
 	# set hemispheres
 	hemispheres = ['lh','rh']
-	
+
 	# set outdir
 	outdir = 'parc-stats/parc-stats'
-	
+
 	# generate output directory if not already there
 	if os.path.isdir(outdir):
 		print("directory exits")
