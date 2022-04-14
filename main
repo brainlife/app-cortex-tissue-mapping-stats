@@ -24,6 +24,10 @@ if [ -f ./parc_stats/parc-stats/aparc_STDEV.csv ]; then
 	mkdir raw
 	mv aparc-rois/ *.txt ./tmp/*.txt *.gii ./raw/
 	rm -rf tmp
+	mv parc-stats ./tmp
+	mkdir parc-stats parc-stats/parc-stats
+	mv tmp/* ./parc-stats/parc-stats/
+	rm -rf tmp
 	echo "complete"
 	exit 0
 else
