@@ -90,7 +90,7 @@ do
 	fi
 
 	# convert freesurfer aparc labels from cortexmapping app
-	[ ! -f ${hemi}.aparc.shape.gii ] && wb_command -gifti-all-labels-to-rois ${labeldir}/${hemi}.${aparc_to_use}.*.label.gii \
+	[ ! -f ${hemi}.aparc.shape.gii ] && wb_command -gifti-all-labels-to-rois ${labeldir}/${hemi}.${aparc_to_use}.native.label.gii \
 		1 \
 		${hemi}.aparc.shape.gii
 
@@ -129,7 +129,7 @@ do
 	hemi="${metrics::2}"
 	keys=$(eval "echo \$roi_keys_${hemi}")
 	keys_parc=$(eval "echo \$roi_keys_${hemi}_parc")
-	aparc_map=(`wb_command -file-information ${labeldir}/${hemi}.${aparc_to_use}.*.label.gii -only-map-names`)
+	aparc_map=(`wb_command -file-information ${labeldir}/${hemi}.${aparc_to_use}.native.label.gii -only-map-names`)
 
 	if [[ ! ${metrics:3} == 'goodvertex.func.gii' ]]; then
 		echo "computing measures for ${metrics}"
@@ -147,7 +147,7 @@ do
 				fi
 
 				if [[ ! ${keyname} == 'Medial_wall' ]]; then
-					[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.${aparc_to_use}.*.label.gii \
+					[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.${aparc_to_use}.native.label.gii \
 						./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii -name "${KEYS}" -map "${aparc_map}"
 
 					# compute in freesurfer parcellation
