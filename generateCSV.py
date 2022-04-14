@@ -13,7 +13,7 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 		print(parc)
 
 		# identify structure names from files. because of medial wall in aparc.a2009s, have to do in this weird way
-		if 'aparc' in parc:
+		if parc=='aparc':
 			with open('aparc_keys.txt') as aparc_keys:
 				structureList = aparc_keys.read().split()
 		else:
@@ -97,9 +97,9 @@ def main():
 
 	# set parcellations
 	if 'lh_annot' in list(config.keys()):
-		parcellations = [aparc_to_use,'parc']
+		parcellations = ['aparc','parc']
 	else:
-		parcellations = [aparc_to_use]
+		parcellations = ['aparc']
 
 	#### set up other inputs ####
 	# grab diffusion measures from file names
