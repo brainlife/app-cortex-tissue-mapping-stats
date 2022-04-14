@@ -10,8 +10,14 @@ set -e
 cortexmap=`jq -r '.cortexmap' config.json`
 lh_annot=`jq -r '.lh_annot' config.json`
 rh_annot=`jq -r '.rh_annot' config.json`
-lh_pial=`jq -r '.lh_pial_surf' config.json`
-rh_pial=`jq -r '.rh_pial_surf' config.json`
+lh_vertices=`jq -r '.left' config.json`
+rh_vertices=`jq -r '.right' config.json`
+lh_pial=${lh_vertices}/lh.pial*.gii
+rh_pial=${rh_vertices}/rh.pial*.gii
+aparc_to_use=`jq -r '.fsaparc' config.json`
+
+# hemispheres
+hemispheres="lh rh"
 
 # filepaths
 cp -R ${cortexmap} ./cortexmap/
@@ -26,9 +32,6 @@ tmpdir="./tmp/"
 # make directories
 mkdir -p ${roidir} ${tmpdir} ${roidir_parc}
 
-# hemispheres
-hemispheres="lh rh"
-
 # metrics
 METRICS=($(ls ${funcdir}))
 
@@ -40,6 +43,14 @@ do
 	echo "converting files for ${hemi}"
 	parc=$(eval "echo \$${hemi}_annot")
 	pial=$(eval "echo \$${hemi}_pial")
+
+	# check if inflated pial exists
+	for i in ${pial}
+	do
+		if [[ ! "${i}" == *"inflated"* ]]; then
+			pial=${i}
+		fi
+	done
 
 	# convert surface parcellations that came from multi atlas transfer tool
 	if [[ ! ${parc} == 'null' ]]; then
@@ -79,7 +90,7 @@ do
 	fi
 
 	# convert freesurfer aparc labels from cortexmapping app
-	[ ! -f ${hemi}.aparc.shape.gii ] && wb_command -gifti-all-labels-to-rois ${labeldir}/${hemi}.aparc.*.native.label.gii \
+	[ ! -f ${hemi}.aparc.shape.gii ] && wb_command -gifti-all-labels-to-rois ${labeldir}/${hemi}.${aparc_to_use}.*.label.gii \
 		1 \
 		${hemi}.aparc.shape.gii
 
@@ -118,6 +129,7 @@ do
 	hemi="${metrics::2}"
 	keys=$(eval "echo \$roi_keys_${hemi}")
 	keys_parc=$(eval "echo \$roi_keys_${hemi}_parc")
+	aparc_map=(`wb_command -file-information ${labeldir}/${hemi}.${aparc_to_use}.*.label.gii -only-map-names`)
 
 	if [[ ! ${metrics:3} == 'goodvertex.func.gii' ]]; then
 		echo "computing measures for ${metrics}"
@@ -135,8 +147,8 @@ do
 				fi
 
 				if [[ ! ${keyname} == 'Medial_wall' ]]; then
-					[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.aparc.*.native.label.gii \
-						./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii -name "${KEYS}" -map "${hemi}_aparc.a2009s"
+					[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.${aparc_to_use}.*.*.label.gii \
+						./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii -name "${KEYS}" -map "${aparc_map}"
 
 					# compute in freesurfer parcellation
 					wb_command -metric-stats ${funcdir}/${metrics} \
@@ -147,6 +159,8 @@ do
 
 			# if parcellation inputted, compute stats in parcellation as well
 			if [[ ! ${parc} == 'null' ]]; then
+				parc_map=(`wb_command -file-information ${hemi}.parc.label.gii -only-map-names`)
+
 				for KEYS in ${keys_parc}
 				do
 					if [[ ! ${KEYS} == 'unknown_0' ]]; then
@@ -164,7 +178,7 @@ do
 
 						if [[ ! ${keyname} == 'H' ]]; then
 							[ ! -f ${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${hemi}.parc.label.gii \
-								${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii -name "${KEYS}" -map "${hemi}_parc"
+								${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii -name "${KEYS}" -map "${parc_map}"
 
 							# compute in freesurfer parcellation
 							wb_command -metric-stats ${funcdir}/${metrics} \
@@ -182,59 +196,61 @@ done
 METRICS="volume thickness"
 for metrics in ${METRICS}
 do
-	echo "computing statistics for ${metrics}"
-	for hemi in ${hemispheres}
-	do
-		keys=$(eval "echo \$roi_keys_${hemi}")
-		keys_parc=$(eval "echo \$roi_keys_${hemi}_parc")
-
-		for measures in ${MEASURES}
+	if [ -f ${surfdir}/${hemi}.${metrics}.shape.gii ]; then
+		echo "computing statistics for ${metrics}"
+		for hemi in ${hemispheres}
 		do
-			echo ${measures}
-			for KEYS in ${keys}
+			keys=$(eval "echo \$roi_keys_${hemi}")
+			keys_parc=$(eval "echo \$roi_keys_${hemi}_parc")
+
+			for measures in ${MEASURES}
 			do
-				if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
-					HEMI=${KEYS::1}
-					keyname=${KEYS:2}
-				else
-					HEMI=${hemi}
-					keyname=${KEYS:3}
-				fi
-
-				if [[ ! ${keyname} == 'Medial_wall' ]]; then
-					# compute in freesurfer parcellation
-					wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
-						-reduce ${measures} \
-						-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
-				fi
-			done
-
-			# if parcellation inputted, compute stats in parcellation as well
-			if [[ ! ${parc} == 'null' ]]; then
-				for KEYS in ${keys_parc}
+				echo ${measures}
+				for KEYS in ${keys}
 				do
-					if [[ ! ${KEYS} == 'unknown_0' ]]; then
-						if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
-							HEMI=${KEYS::1}
-							keyname=${KEYS:2}
-						else
-							HEMI=${hemi}
-							keyname=${KEYS:3}
-						fi
+					if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
+						HEMI=${KEYS::1}
+						keyname=${KEYS:2}
+					else
+						HEMI=${hemi}
+						keyname=${KEYS:3}
+					fi
 
-						if [[ "${keyname}" == *"_ROI"* ]]; then
-							keyname=`echo ${keyname%"_ROI"*}`
-						fi
-
-						if [[ ! ${keyname} == 'H' ]]; then
-							# compute in parcellation
-							wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
-								-reduce ${measures} \
-								-roi ${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii >> ${tmpdir}/parc_${measures}_${hemi}."${metrics}".txt
-						fi
+					if [[ ! ${keyname} == 'Medial_wall' ]]; then
+						# compute in freesurfer parcellation
+						wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+							-reduce ${measures} \
+							-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
 					fi
 				done
-			fi
+
+				# if parcellation inputted, compute stats in parcellation as well
+				if [[ ! ${parc} == 'null' ]]; then
+					for KEYS in ${keys_parc}
+					do
+						if [[ ! ${KEYS} == 'unknown_0' ]]; then
+							if [[ ${KEYS::1} == 'L' ]] || [[ ${KEYS::1} == 'R' ]]; then
+								HEMI=${KEYS::1}
+								keyname=${KEYS:2}
+							else
+								HEMI=${hemi}
+								keyname=${KEYS:3}
+							fi
+
+							if [[ "${keyname}" == *"_ROI"* ]]; then
+								keyname=`echo ${keyname%"_ROI"*}`
+							fi
+
+							if [[ ! ${keyname} == 'H' ]]; then
+								# compute in parcellation
+								wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+									-reduce ${measures} \
+									-roi ${roidir_parc}/${HEMI}.parc.${keyname}.shape.gii >> ${tmpdir}/parc_${measures}_${hemi}."${metrics}".txt
+							fi
+						fi
+					done
+				fi
+			done
 		done
-	done
+	fi
 done

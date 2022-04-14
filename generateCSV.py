@@ -7,23 +7,23 @@ import numpy as np
 import os, sys, argparse
 import glob
 
-def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,hemispheres,parcellations,outdir):
+def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,hemispheres,parcellations,cortical_csv,outdir):
 	#### loop through summary measures and make csvs for each. these can be used in MLC analyses ####
 	for parc in parcellations:
 		print(parc)
 
 		# identify structure names from files. because of medial wall in aparc.a2009s, have to do in this weird way
-		if parc == 'aparc':
+		if parc=='aparc':
 			with open('aparc_keys.txt') as aparc_keys:
 				structureList = aparc_keys.read().split()
 		else:
 			with open('parc_keys.txt') as parc_keys:
-				structureList = parc_keys.read().split()			
-			# with open('parc.structurelist_lh.txt','r') as structures: 
+				structureList = parc_keys.read().split()
+			# with open('parc.structurelist_lh.txt','r') as structures:
 			# 	structuresList_lh = structures.read().split('\n')
 			# 	structuresList_lh = [ x for x in structuresList_lh if x ]
 
-			# with open('parc.structurelist_rh.txt','r') as structures: 
+			# with open('parc.structurelist_rh.txt','r') as structures:
 			# 	structuresList_rh = structures.read().split('\n')
 			# 	structuresList_rh = [ x for x in structuresList_rh if x ]
 
@@ -64,12 +64,12 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 				data = data_lh[0].tolist() + data_rh[0].tolist()
 				# else:
 				# 	data = data_lh + data_rh
-			
+
 				# add to dataframe
 				df[metrics] = data
-				
+
 				# handle scaling issues
-				if np.median(df[metrics].astype(np.float)) < 0.01:
+				if np.nanmedian(df[metrics].astype(np.float)) < 0.01:
 					df[metrics] = df[metrics].astype(np.float) * 1000
 
 			# sort dataframe by structureID
@@ -77,6 +77,11 @@ def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,he
 
 			# write out to csv
 			df.to_csv('./%s/%s_%s.csv' %(outdir,parc,measures), index=False)
+
+		# grab desired csv for validator and save as cortical.csv
+		cortical_df = pd.read_csv('./%s/%s.csv' %(outdir,cortical_csv))
+		cortical_df.to_csv('./%s/cortex.csv' %outdir, index=False)
+
 
 def main():
 
@@ -87,7 +92,9 @@ def main():
 
 	#### parse inputs ####
 	subjectID = config['_inputs'][0]['meta']['subject']
-  
+	cortical_csv = config['validator_csv']
+	aparc_to_use = config['fsaparc']
+
 	# set parcellations
 	if 'lh_annot' in list(config.keys()):
 		parcellations = ['aparc','parc']
@@ -99,44 +106,41 @@ def main():
 	diffusion_measures = [ x.split('.')[2] for x in glob.glob('./tmp/aparc_MIN_lh.*.txt') ]
 
 	# depending on what's in the array, rearrange in a specific order I like
-	if all(x in diffusion_measures for x in ['noddi_kappa','ga']):
-		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','noddi_kappa','volume','thickness']
-	elif all(x in diffusion_measures for x in ['noddi_kappa','fa']):
-		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','noddi_kappa','volume','thickness']
-	elif all(x in diffusion_measures for x in ['ndi','ga']):
-		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','volume','thickness']
-	elif all(x in diffusion_measures for x in ['ndi','fa']):
-		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','volume','thickness']
-	elif 'ga' in diffusion_measures:
-		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','volume','thickness']
-	elif 'fa' in diffusion_measures:
-		diffusion_measures = ['ad','fa','md','rd','volume','thickness']
-	elif 'gmd' in diffusion_measures:
-		diffusion_measures = ['gmd','volume','thickness']
-	elif 'myelinmap' in diffusion_measures:
-		diffusion_measures = ['myelinmap','volume','thickness']
-	elif 'T1' in diffusion_measures:
-		diffusion_measures = diffusion_measures
-	elif 'noddi_kappa' in diffusion_measures:
-		diffusion_measures = ['ndi','isovf','odi','noddi_kappa','volume','thickness']
-	else:
-		diffusion_measures = ['ndi','isovf','odi','volume','thickness']
-		
-	if 'snr' in diffusion_measures:
-		diffusion_measures = diffusion_measures + ['snr']
-		
+# 	if all(x in diffusion_measures for x in ['noddi_kappa','ga']):
+# 		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
+# 	elif all(x in diffusion_measures for x in ['noddi_kappa','fa']):
+# 		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
+# 	elif all(x in diffusion_measures for x in ['ndi','ga']):
+# 		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','snr','volume','thickness']
+# 	elif all(x in diffusion_measures for x in ['ndi','fa']):
+# 		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','snr','volume','thickness']
+# 	elif 'ga' in diffusion_measures:
+# 		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','snr','volume','thickness']
+# 	elif 'fa' in diffusion_measures:
+# 		diffusion_measures = ['ad','fa','md','rd','snr','volume','thickness']
+# 	elif 'gmd' in diffusion_measures:
+# 		diffusion_measures = ['gmd','snr','volume','thickness']
+# 	elif 'myelinmap' in diffusion_measures:
+# 		diffusion_measures = ['myelinmap','snr','volume','thickness']
+# 	elif 'T1' in diffusion_measures:
+# 		diffusion_measures = diffusion_measures
+# 	elif 'noddi_kappa' in diffusion_measures:
+# 		diffusion_measures = ['ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
+# 	else:
+# 		diffusion_measures = ['ndi','isovf','odi','snr','volume','thickness']
+
 	# summary statistics measures
 	summary_measures = [ x.split('.')[1].split('aparc_')[1].split('_lh')[0] for x in glob.glob('./tmp/aparc_*_lh.%s.txt' %diffusion_measures[0]) ]
-	
+
 	# set columns for pandas array
 	columns = ['subjectID','structureID','nodeID'] + diffusion_measures
-	
+
 	# set hemispheres
 	hemispheres = ['lh','rh']
-	
+
 	# set outdir
-	outdir = 'parc-stats'
-	
+	outdir = 'parc_stats/parc-stats'
+
 	# generate output directory if not already there
 	if os.path.isdir(outdir):
 		print("directory exits")
@@ -146,7 +150,7 @@ def main():
 
 	#### run command to generate csv structures ####
 	print("generating csvs")
-	generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,hemispheres,parcellations,outdir)
+	generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,hemispheres,parcellations,cortical_csv,outdir)
 
 if __name__ == '__main__':
 	main()
