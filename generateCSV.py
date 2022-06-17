@@ -24,8 +24,6 @@ def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns
             for m in diffusion_measures:
                 tmp2 = pd.read_csv('./'+h+'.varea.'+i+'.'+m+'.csv',header=None,names=tmp_names)
                 tmp2 = tmp2[['StructName','Mean']]
-                if m in ['ad','md','rd'] and np.mean(tmp2['Mean']) < 0.005:
-                    tmp2['Mean'] = tmp2['Mean'] * 1000
 
                 tmp2.rename(columns={'StructName': 'structureID', 'Mean': m},inplace=True)
                 tmp2['structureID'] = [ h+'_'+f for f in tmp2['structureID'] ]
