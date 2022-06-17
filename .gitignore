@@ -1,0 +1,7 @@
+config.json
+output/*
+cortexmap/*
+parc_stats/*
+prf_surfaces/*
+raw/*
+tmp.sh

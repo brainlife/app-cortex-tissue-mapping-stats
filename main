@@ -3,31 +3,30 @@
 #PBS -l nodes=1:ppn=1
 #PBS -l vmem=8gb
 #PBS -l walltime=5:30:00
-#PBS -N app-cortex-mapping-stats
+#PBS -N app-cortex-mapping-stats-benson-eccentricity
 #PBS -V
 
+set -x
 set -e
 
-[ ! -d ./parc-stats ] && mkdir -p ./parc-stats
+[ ! -d ./parc_stats ] && mkdir -p ./parc_stats
 
 # copy license and export path for freesurfer
 [ -z "$FREESURFER_LICENSE" ] && echo "Please set FREESURFER_LICENSE in .bashrc" && exit 1;
 echo $FREESURFER_LICENSE > license.txt
 
-# convert surfaces and generate appropriate summary statistic text files
-time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/connectome_workbench:1.4.2b ./compute-stats.sh
+# generates surfaces for appropriate summary statistic
+time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/connectome_workbench:1.5.0 ./generate-surfaces.sh
+
+# generate appropriate summary statistic text files and csvs
+time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/freesurfer:7.2.0 ./compute-stats.sh
 
 # generate csv's for each statistic that can be useful in MLC analyses
 time singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./generateCSV.py
 
-if [ -f ./parc_stats/parc-stats/aparc_STDEV.csv ]; then
+if [ -f ./parc_stats/parc-stats/parc_MEAN.csv ]; then
 	mkdir raw
-	mv aparc-rois/ *.txt ./tmp/*.txt *.gii ./raw/
-	rm -rf tmp
-	mv parc-stats ./tmp
-	mkdir parc-stats parc-stats/parc-stats
-	mv tmp/* ./parc-stats/parc-stats/
-	rm -rf tmp
+	mv  *.txt *.csv *.gii *.annot ./raw/
 	echo "complete"
 	exit 0
 else
