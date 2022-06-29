@@ -8,7 +8,7 @@
 
 set -e
 
-[ ! -d ./parc_stats ] && mkdir -p ./parc_stats
+[ ! -d ./parc-stats ] && mkdir -p ./parc-stats
 
 # copy license and export path for freesurfer
 [ -z "$FREESURFER_LICENSE" ] && echo "Please set FREESURFER_LICENSE in .bashrc" && exit 1;
@@ -20,7 +20,7 @@ time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt 
 # generate csv's for each statistic that can be useful in MLC analyses
 time singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./generateCSV.py
 
-if [ -f ./parc_stats/parc-stats/aparc_STDEV.csv ]; then
+if [ -f ./parc-stats/parc-stats/aparc_STDEV.csv ]; then
 	mkdir raw
 	mv aparc-rois/ *.txt ./tmp/*.txt *.gii ./raw/
 	rm -rf tmp
