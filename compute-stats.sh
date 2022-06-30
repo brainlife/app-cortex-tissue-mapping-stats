@@ -88,7 +88,7 @@ do
 	fi
 
 	# convert freesurfer aparc labels from cortexmapping app
-	[ ! -f ${hemi}.aparc.shape.gii ] && wb_command -gifti-all-labels-to-rois ${labeldir}/${hemi}.${aparc_to_use}.*.label.gii \
+	[ ! -f ${hemi}.aparc.shape.gii ] && wb_command -gifti-all-labels-to-rois ${labeldir}/${hemi}.${aparc_to_use}.native.label.gii \
 		1 \
 		${hemi}.aparc.shape.gii
 
@@ -101,9 +101,19 @@ do
 		else
 			keyname=${KEYS:3}
 		fi
-
-		if [[ ! ${keyname} == 'Medial_wall' ]]; then
-			echo ${KEYS} >> aparc_keys.txt
+		
+		if [[ ${aparc_to_use} == 'aparc.a2009s' ]]; then
+			if [[ ! ${keyname} == 'Medial_Wall' ]]; then
+				echo ${KEYS} >> aparc_keys.txt
+			fi
+		elif [[ ${aparc_to_use} == 'aparc' ]]; then
+			if [[ ! ${keyname} == 'corpuscallosum' ]]; then
+				echo ${KEYS} >> aparc_keys.txt
+			fi
+		else
+			if [[ ! ${keyname} == 'bankssts' ]] && [[ ! ${keyname} == 'corpuscallosum' ]] && [[ ! ${keyname} == 'frontalpole' ]] && [[ ! ${keyname} == 'temporalpole' ]]; then
+				echo ${KEYS} >> aparc_keys.txt
+			fi
 		fi
 	done
 done
@@ -127,7 +137,7 @@ do
 	hemi="${metrics::2}"
 	keys=$(eval "echo \$roi_keys_${hemi}")
 	keys_parc=$(eval "echo \$roi_keys_${hemi}_parc")
-	aparc_map=(`wb_command -file-information ${labeldir}/${hemi}.${aparc_to_use}.*.label.gii -only-map-names`)
+	aparc_map=(`wb_command -file-information ${labeldir}/${hemi}.${aparc_to_use}.native.label.gii -only-map-names`)
 
 	if [[ ! ${metrics:3} == 'goodvertex.func.gii' ]]; then
 		echo "computing measures for ${metrics}"
@@ -143,15 +153,36 @@ do
 					HEMI=${hemi}
 					keyname=${KEYS:3}
 				fi
+				if [[ ${aparc_to_use} == 'aparc.a2009s' ]]; then
+					if [[ ! ${keyname} == 'Medial_wall' ]]; then
+						[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.${aparc_to_use}.native.label.gii \
+							./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii -name "${KEYS}" -map "${aparc_map}"
 
-				if [[ ! ${keyname} == 'Medial_wall' ]]; then
-					[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.${aparc_to_use}.*.label.gii \
-						./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii -name "${KEYS}" -map "${aparc_map}"
+						# compute in freesurfer parcellation
+						wb_command -metric-stats ${funcdir}/${metrics} \
+							-reduce ${measures} \
+							-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_"${metrics::-9}".txt
+					fi
+				elif [[ ${aparc_to_use} == 'aparc' ]]; then
+					if [[ ! ${keyname} == 'corpuscallosum' ]]; then
+						[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.${aparc_to_use}.native.label.gii \
+							./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii -name "${KEYS}" -map "${aparc_map}"
 
-					# compute in freesurfer parcellation
-					wb_command -metric-stats ${funcdir}/${metrics} \
-						-reduce ${measures} \
-						-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_"${metrics::-9}".txt
+						# compute in freesurfer parcellation
+						wb_command -metric-stats ${funcdir}/${metrics} \
+							-reduce ${measures} \
+							-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_"${metrics::-9}".txt
+					fi
+				else
+					if [[ ! ${keyname} == 'bankssts' ]] && [[ ! ${keyname} == 'corpuscallosum' ]] && [[ ! ${keyname} == 'frontalpole' ]] && [[ ! ${keyname} == 'temporalpole' ]]; then
+						[ ! -f ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii ] && wb_command -gifti-label-to-roi ${labeldir}/${hemi}.${aparc_to_use}.native.label.gii \
+							./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii -name "${KEYS}" -map "${aparc_map}"
+
+						# compute in freesurfer parcellation
+						wb_command -metric-stats ${funcdir}/${metrics} \
+							-reduce ${measures} \
+							-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_"${metrics::-9}".txt
+					fi
 				fi
 			done
 
@@ -214,11 +245,27 @@ do
 						keyname=${KEYS:3}
 					fi
 
-					if [[ ! ${keyname} == 'Medial_wall' ]]; then
-						# compute in freesurfer parcellation
-						wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
-							-reduce ${measures} \
-							-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
+					if [[ ${aparc_to_use} == 'aparc.a2009s' ]]; then
+						if [[ ! ${keyname} == 'Medial_wall' ]]; then
+							# compute in freesurfer parcellation
+							wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+								-reduce ${measures} \
+								-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
+						fi
+					elif [[ ${aparc_to_use} == 'aparc' ]]; then
+						if [[ ! ${keyname} == 'corpuscallosum' ]]; then
+							# compute in freesurfer parcellation
+							wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+								-reduce ${measures} \
+								-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
+						fi
+					else
+						if [[ ! ${keyname} == 'bankssts' ]] && [[ ! ${keyname} == 'corpuscallosum' ]] && [[ ! ${keyname} == 'frontalpole' ]] && [[ ! ${keyname} == 'temporalpole' ]]; then
+							# compute in freesurfer parcellation
+							wb_command -metric-stats ${surfdir}/${hemi}.${metrics}.shape.gii \
+								-reduce ${measures} \
+								-roi ./aparc-rois/${HEMI}.aparc.${keyname}.shape.gii >> ${tmpdir}/aparc_${measures}_${hemi}."${metrics}".txt
+						fi
 					fi
 				done
 
