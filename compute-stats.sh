@@ -10,8 +10,8 @@ set -e
 cortexmap=`jq -r '.cortexmap' config.json`
 lh_annot=`jq -r '.lh_annot' config.json`
 rh_annot=`jq -r '.rh_annot' config.json`
-lh_pial=`jq -r '.lh_pial_surf' config.json`
-rh_pial=`jq -r '.rh_pial_surf' config.json`
+lh_white=`jq -r '.lh_surf' config.json`
+rh_white=`jq -r '.rh_surf' config.json`
 aparc_to_use=`jq -r '.fsaparc' config.json`
 freesurfer=`jq -r '.freesurfer' config.json`
 
@@ -45,7 +45,7 @@ for hemi in $hemispheres
 do
   echo "converting files for ${hemi}"
   parc=$(eval "echo \$${hemi}_annot")
-  white=$(eval "echo \$${hemi}_white")
+  white=$(eval "echo \$${hemi}_white")"/"${hemi}".white.gii"
 
   # check if white exists
   for i in ${white}
