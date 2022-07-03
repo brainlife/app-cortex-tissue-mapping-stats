@@ -57,7 +57,7 @@ def main():
 
     # set "parcellations", i.e the eccentricity binnings
     parcellations = ['aparc','aparc.a2009s']
-    if os.path.isfile('./lh.aparc.DKTatlas.anatomical.csv'):
+    if os.path.isfile('./aparc.DKTatlas.lh.anatomical.csv'):
         parcellations = parcellations + ['aparc.DKTatlas']
 
     if os.path.isfile('./lh.parc.annot'):
