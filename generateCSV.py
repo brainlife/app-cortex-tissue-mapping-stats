@@ -40,7 +40,7 @@ def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns
 		out.reset_index(drop=True,inplace=True)
 
 		# save to csv
-		out.to_csv(outdir+'/'+i+'_MEAN.csv',index=False)
+		out.to_csv(outdir+'/'+i+'.csv',index=False)
 
 	#return out
 
@@ -53,13 +53,12 @@ def main():
 
 	#### parse inputs ####
 	subjectID = config['_inputs'][0]['meta']['subject']
-	aparc_to_use = config['fsaparc']
+    aparc_to_use = config['validator_csv']
 
-	# set "parcellations", i.e the eccentricity binnings
-	if os.path.isfile('./lh.parc.annot'):
-		parcellations = [aparc_to_use,'parc']
-	else:
-		parcellations = [aparc_to_use]
+    # set "parcellations", i.e the eccentricity binnings
+    parcellations = ['aparc','aparc.a2009s']
+    if os.path.isfile('./aparc.DKTatlas.lh.anatomical.csv'):
+        parcellations = parcellations + ['aparc.DKTatlas']
 
 	# identify diffusion measures
 	diffusion_measures = [  x.split(".")[4] for x in glob.glob("./"+aparc_to_use+".lh.*.csv") if 'anatomical' not in x ]
