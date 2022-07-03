@@ -10,8 +10,8 @@ set -e
 cortexmap=`jq -r '.cortexmap' config.json`
 lh_annot=`jq -r '.lh_annot' config.json`
 rh_annot=`jq -r '.rh_annot' config.json`
-lh_white=`jq -r '.lh_surf' config.json`
-rh_white=`jq -r '.rh_surf' config.json`
+lh_white=`jq -r '.lh_white_surf' config.json`
+rh_white=`jq -r '.rh_white_surf' config.json`
 aparc_to_use=`jq -r '.fsaparc' config.json`
 freesurfer=`jq -r '.freesurfer' config.json`
 
