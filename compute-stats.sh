@@ -41,7 +41,10 @@ measures=(`echo ${measures}`)
 echo "measures to loop through:${measures[*]}"
 
 # identify parcellations to use
-parcellations="${aparc_to_use}"
+parcellations="aparc aparc.a2009s"
+if [ -f ./output/mri/aparc.DKTatlas+aseg.mgz ]; then
+  parcellations=${parcellations}" aparc.DKTatlas"
+fi
 if [ -f ./lh.parc.annot ]; then
   parcellations=${parcellations}" parc"
 fi

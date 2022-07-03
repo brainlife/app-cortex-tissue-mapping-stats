@@ -40,52 +40,54 @@ def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns
 		out.reset_index(drop=True,inplace=True)
 
 		# save to csv
-		out.to_csv(outdir+'/'+i+'_MEAN.csv',index=False)
+		out.to_csv(outdir+'/'+i+'.csv',index=False)
 
 	#return out
 
 def main():
 
-	print("setting up input parameters")
-	#### load config ####
-	with open('config.json','r') as config_f:
-		config = json.load(config_f)
+    print("setting up input parameters")
+    #### load config ####
+    with open('config.json','r') as config_f:
+    	config = json.load(config_f)
 
-	#### parse inputs ####
-	subjectID = config['_inputs'][0]['meta']['subject']
-	aparc_to_use = config['fsaparc']
+    #### parse inputs ####
+    subjectID = config['_inputs'][0]['meta']['subject']
+    aparc_to_use = config['validator_csv']
 
-	# set "parcellations", i.e the eccentricity binnings
-	if os.path.isfile('./lh.parc.annot'):
-		parcellations = [aparc_to_use,'parc']
-	else:
-		parcellations = [aparc_to_use]
+    # set "parcellations", i.e the eccentricity binnings
+    parcellations = ['aparc','aparc.a2009s']
+    if os.path.isfile('./lh.aparc.DKTatlas.anatomical.csv'):
+        parcellations = parcellations + ['aparc.DKTatlas']
 
-	# identify diffusion measures
-	diffusion_measures = [  x.split(".")[4] for x in glob.glob("./"+aparc_to_use+".lh.*.csv") if 'anatomical' not in x ]
+    if os.path.isfile('./lh.parc.annot'):
+    	parcellations = parcellations+['parc']
 
-	# anatomical measures
-	anatomical_measures = ['number_of_vertices','surface_area_mm^2','gray_matter_volume_mm^3','thickness','thickness_std','mean_curv','gaus_curv','foldind','curvind']
+    # identify diffusion measures
+    diffusion_measures = [  x.split(".")[4] for x in glob.glob("./"+aparc_to_use+".lh.*.csv") if 'anatomical' not in x ]
 
-	# set columns for pandas array
-	columns = ['subjectID','structureID','parcellationID'] + diffusion_measures + anatomical_measures
+    # anatomical measures
+    anatomical_measures = ['number_of_vertices','surface_area_mm^2','gray_matter_volume_mm^3','thickness','thickness_std','mean_curv','gaus_curv','foldind','curvind']
 
-	# set hemispheres
-	hemispheres = ['lh','rh']
+    # set columns for pandas array
+    columns = ['subjectID','structureID','parcellationID'] + diffusion_measures + anatomical_measures
 
-	# set outdir
-	outdir = 'parc-stats/parc-stats'
+    # set hemispheres
+    hemispheres = ['lh','rh']
 
-	# generate output directory if not already there
-	if os.path.isdir(outdir):
-	    print("directory exits")
-	else:
-	    print("making output directory")
-	    os.mkdir(outdir)
+    # set outdir
+    outdir = 'parc-stats/parc-stats'
 
-	#### run command to generate csv structures ####
-	print("generating csvs")
-	generateSummaryCsvs(subjectID,anatomical_measures, diffusion_measures,columns,hemispheres,parcellations,outdir)
+    # generate output directory if not already there
+    if os.path.isdir(outdir):
+        print("directory exits")
+    else:
+        print("making output directory")
+        os.mkdir(outdir)
+
+    #### run command to generate csv structures ####
+    print("generating csvs")
+    generateSummaryCsvs(subjectID,anatomical_measures, diffusion_measures,columns,hemispheres,parcellations,outdir)
 
 if __name__ == '__main__':
 	main()

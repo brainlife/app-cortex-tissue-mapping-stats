@@ -8,7 +8,7 @@
 
 set -e
 
-aparc_to_use=`jq -r '.fsaparc' config.json`
+validator_csv=`jq -r '.validator_csv' config.json`
 
 [ ! -d ./parc-stats ] && mkdir -p ./parc-stats
 
@@ -25,9 +25,10 @@ time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt 
 # generate csv's for each statistic that can be useful in MLC analyses
 time singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./generateCSV.py
 
-if [ -f ./parc-stats/parc-stats/${aparc_to_use}.csv ]; then
+if [ -f ./parc-stats/parc-stats/aparc.csv ]; then
 	mkdir raw
 	mv *.gii *.txt *.csv *.annot ./raw/
+	cp -v ./parc-stats/parc-stats/${validator_csv}.csv ./parc-stats/parc-stats/cortex.csv
 	echo "complete"
 	exit 0
 else
