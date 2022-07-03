@@ -7,81 +7,42 @@ import numpy as np
 import os, sys, argparse
 import glob
 
-def generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,hemispheres,parcellations,cortical_csv,outdir):
-	#### loop through summary measures and make csvs for each. these can be used in MLC analyses ####
-	for parc in parcellations:
-		print(parc)
+def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns,hemispheres,parcellations,outdir):
 
-		# identify structure names from files. because of medial wall in aparc.a2009s, have to do in this weird way
-		if parc=='aparc':
-			with open('aparc_keys.txt') as aparc_keys:
-				structureList = aparc_keys.read().split()
-		else:
-			with open('parc_keys.txt') as parc_keys:
-				structureList = parc_keys.read().split()
-			# with open('parc.structurelist_lh.txt','r') as structures:
-			# 	structuresList_lh = structures.read().split('\n')
-			# 	structuresList_lh = [ x for x in structuresList_lh if x ]
+	for i in parcellations:
+		out = pd.DataFrame(columns=columns)
+		for h in hemispheres:
+			# anatomical
+			tmp = pd.read_csv('./'+i+'.'+h+'.anatomical.csv',header=None,names=['structureID']+anatomical_measures)
+			if i != 'parc':
+				tmp['structureID'] = [ h+'_'+f for f in tmp['structureID'] ]
+			tmp['parcellationID'] = [ i for f in range(len(tmp['structureID'])) ]
+			tmp['subjectID'] = [ str(subjectID) for f in range(len(tmp['structureID'])) ]
+			tmp['hemisphere'] = [ h for f in range(len(tmp['structureID'])) ]
 
-			# with open('parc.structurelist_rh.txt','r') as structures:
-			# 	structuresList_rh = structures.read().split('\n')
-			# 	structuresList_rh = [ x for x in structuresList_rh if x ]
+			# diffusion
+			tmp_names = ['Index' ,'SegId', 'StructName', 'Mean', 'StdDev', 'Min', 'Max', 'Range']
+			for m in diffusion_measures:
+				tmp2 = pd.read_csv('./'+i+'.'+h+'.'+m+'.csv',header=None,names=tmp_names)
+				tmp2 = tmp2[['StructName','Mean']]
 
-			#structureList = structuresList_lh + structuresList_rh
-		print(structureList)
+				tmp2.rename(columns={'StructName': 'structureID', 'Mean': m},inplace=True)
+				if i != 'parc':
+					tmp2['structureID'] = [ h+'_'+f for f in tmp2['structureID'] ]
+				tmp2['parcellationID'] = [ i for f in range(len(tmp2['structureID'])) ]
+				tmp2['subjectID'] = [ str(subjectID) for f in range(len(tmp2['structureID'])) ]
+				tmp2['hemisphere'] = [ h for f in range(len(tmp2['structureID'])) ]
 
-		# loop through summary statistic measures making one csv per parcellation and measure
-		for measures in summary_measures:
-			print(measures)
+				tmp = pd.merge(tmp, tmp2, on=["subjectID", "structureID", "hemisphere", "parcellationID"])
+			out = out.append(tmp)
 
-			# set up pandas dataframe
-			df = pd.DataFrame([],columns=columns,dtype=object)
-			df['subjectID'] = [ subjectID for x in range(len(structureList)) if not 'Medial_wall' in structureList[x] ]
-			df['structureID'] = [ structureList[x] for x in range(len(structureList)) if not 'Medial_wall' in structureList[x] ]
-			df['nodeID'] = [ 1 for x in range(len(structureList)) if not 'Medial_wall' in structureList[x] ]
+		# reset index
+		out.reset_index(drop=True,inplace=True)
 
-			# loop through diffusion measures and read in diffusion measure data. each csv will contain all diffusion measures
-			for metrics in diffusion_measures:
-				print(metrics)
-				# left hemisphere
-				with open('./tmp/%s_%s_%s.%s.txt' %(parc,measures,hemispheres[0],metrics),'r') as data_f:
-					#if parc == 'aparc':
-					data_lh = pd.read_csv(data_f,header=None)
-					#else:
-						# data_lh = data_f.read().split('\t')
-						# data_lh = [ x.split('\n')[0] for x in data_lh ]
+		# save to csv
+		out.to_csv(outdir+'/'+i+'_MEAN.csv',index=False)
 
-				# right hemisphere
-				with open('./tmp/%s_%s_%s.%s.txt' %(parc,measures,hemispheres[1],metrics),'r') as data_f:
-					#if parc == 'aparc':
-					data_rh = pd.read_csv(data_f,header=None)
-					#else:
-					#	data_rh = data_f.read().split('\t')
-					#	data_rh = [ x.split('\n')[0] for x in data_rh ]
-
-				# merge hemisphere data
-				#if parc =='aparc':
-				data = data_lh[0].tolist() + data_rh[0].tolist()
-				# else:
-				# 	data = data_lh + data_rh
-
-				# add to dataframe
-				df[metrics] = data
-
-				# handle scaling issues
-				if np.nanmedian(df[metrics].astype(np.float)) < 0.01:
-					df[metrics] = df[metrics].astype(np.float) * 1000
-
-			# sort dataframe by structureID
-			#df.sort_values(by=['structureID'],axis=0,ascending=True,inplace=True)
-
-			# write out to csv
-			df.to_csv('./%s/%s_%s.csv' %(outdir,parc,measures), index=False)
-
-		# grab desired csv for validator and save as cortical.csv
-		cortical_df = pd.read_csv('./%s/%s.csv' %(outdir,cortical_csv))
-		cortical_df.to_csv('./%s/cortex.csv' %outdir, index=False)
-
+	#return out
 
 def main():
 
@@ -92,48 +53,22 @@ def main():
 
 	#### parse inputs ####
 	subjectID = config['_inputs'][0]['meta']['subject']
-	cortical_csv = config['validator_csv']
 	aparc_to_use = config['fsaparc']
 
-	# set parcellations
-	if 'lh_annot' in list(config.keys()):
-		parcellations = ['aparc','parc']
+	# set "parcellations", i.e the eccentricity binnings
+	if os.path.isfile('./lh.parc.annot'):
+		parcellations = [aparc_to_use,'parc']
 	else:
-		parcellations = ['aparc']
+		parcellations = [aparc_to_use]
 
-	#### set up other inputs ####
-	# grab diffusion measures from file names
-	diffusion_measures = [ x.split('.')[2] for x in glob.glob('./tmp/aparc_MIN_lh.*.txt') ]
+	# identify diffusion measures
+	diffusion_measures = [  x.split(".")[4] for x in glob.glob("./"+aparc_to_use+".lh.*.csv") if 'anatomical' not in x ]
 
-	# depending on what's in the array, rearrange in a specific order I like
-# 	if all(x in diffusion_measures for x in ['noddi_kappa','ga']):
-# 		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
-# 	elif all(x in diffusion_measures for x in ['noddi_kappa','fa']):
-# 		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
-# 	elif all(x in diffusion_measures for x in ['ndi','ga']):
-# 		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','ndi','isovf','odi','snr','volume','thickness']
-# 	elif all(x in diffusion_measures for x in ['ndi','fa']):
-# 		diffusion_measures = ['ad','fa','md','rd','ndi','isovf','odi','snr','volume','thickness']
-# 	elif 'ga' in diffusion_measures:
-# 		diffusion_measures = ['ad','fa','md','rd','ga','ak','mk','rk','snr','volume','thickness']
-# 	elif 'fa' in diffusion_measures:
-# 		diffusion_measures = ['ad','fa','md','rd','snr','volume','thickness']
-# 	elif 'gmd' in diffusion_measures:
-# 		diffusion_measures = ['gmd','snr','volume','thickness']
-# 	elif 'myelinmap' in diffusion_measures:
-# 		diffusion_measures = ['myelinmap','snr','volume','thickness']
-# 	elif 'T1' in diffusion_measures:
-# 		diffusion_measures = diffusion_measures
-# 	elif 'noddi_kappa' in diffusion_measures:
-# 		diffusion_measures = ['ndi','isovf','odi','noddi_kappa','snr','volume','thickness']
-# 	else:
-# 		diffusion_measures = ['ndi','isovf','odi','snr','volume','thickness']
-
-	# summary statistics measures
-	summary_measures = [ x.split('.')[1].split('aparc_')[1].split('_lh')[0] for x in glob.glob('./tmp/aparc_*_lh.%s.txt' %diffusion_measures[0]) ]
+	# anatomical measures
+	anatomical_measures = ['number_of_vertices','surface_area_mm^2','gray_matter_volume_mm^3','thickness','thickness_std','mean_curv','gaus_curv','foldind','curvind']
 
 	# set columns for pandas array
-	columns = ['subjectID','structureID','nodeID'] + diffusion_measures
+	columns = ['subjectID','structureID','parcellationID'] + diffusion_measures + anatomical_measures
 
 	# set hemispheres
 	hemispheres = ['lh','rh']
@@ -143,14 +78,14 @@ def main():
 
 	# generate output directory if not already there
 	if os.path.isdir(outdir):
-		print("directory exits")
+	    print("directory exits")
 	else:
-		print("making output directory")
-		os.mkdir(outdir)
+	    print("making output directory")
+	    os.mkdir(outdir)
 
 	#### run command to generate csv structures ####
 	print("generating csvs")
-	generateSummaryCsvs(subjectID,diffusion_measures,summary_measures,columns,hemispheres,parcellations,cortical_csv,outdir)
+	generateSummaryCsvs(subjectID,anatomical_measures, diffusion_measures,columns,hemispheres,parcellations,outdir)
 
 if __name__ == '__main__':
 	main()
