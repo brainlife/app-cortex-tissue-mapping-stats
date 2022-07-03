@@ -53,12 +53,15 @@ def main():
 
 	#### parse inputs ####
 	subjectID = config['_inputs'][0]['meta']['subject']
-    aparc_to_use = config['validator_csv']
+	aparc_to_use = config['validator_csv']
 
-    # set "parcellations", i.e the eccentricity binnings
-    parcellations = ['aparc','aparc.a2009s']
-    if os.path.isfile('./aparc.DKTatlas.lh.anatomical.csv'):
-        parcellations = parcellations + ['aparc.DKTatlas']
+	# set "parcellations", i.e the eccentricity binnings
+	parcellations = ['aparc','aparc.a2009s']
+	if os.path.isfile('./aparc.DKTatlas.lh.anatomical.csv'):
+		parcellations = parcellations + ['aparc.DKTatlas']
+
+	if os.path.isfile('./lh.parc.annot'):
+		parcellations = parcellations+['parc']
 
 	# identify diffusion measures
 	diffusion_measures = [  x.split(".")[4] for x in glob.glob("./"+aparc_to_use+".lh.*.csv") if 'anatomical' not in x ]
@@ -77,10 +80,10 @@ def main():
 
 	# generate output directory if not already there
 	if os.path.isdir(outdir):
-	    print("directory exits")
+		print("directory exits")
 	else:
-	    print("making output directory")
-	    os.mkdir(outdir)
+		print("making output directory")
+		os.mkdir(outdir)
 
 	#### run command to generate csv structures ####
 	print("generating csvs")
