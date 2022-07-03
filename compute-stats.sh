@@ -40,36 +40,6 @@ done
 measures=(`echo ${measures}`)
 echo "measures to loop through:${measures[*]}"
 
-# if parcellation exists, generate annot files
-for hemi in $hemispheres
-do
-  echo "converting files for ${hemi}"
-  parc=$(eval "echo \$${hemi}_annot")
-  white=$(eval "echo \$${hemi}_white")
-
-  # check if white exists
-  for i in ${white}
-  do
-    if [[ ! "${i}" == *"inflated"* ]]; then
-      white=${i}
-    fi
-  done
-
-  # convert surface parcellations that came from multi atlas transfer tool
-  if [[ ! ${parc} == 'null' ]]; then
-    #### convert annotation files to useable label giftis ####
-    [ ! -f ${hemi}.parc.label.gii ] && mris_convert --annot ${parc} \
-      ${white} \
-      ${hemi}.parc.label.gii
-
-    #### set map names ####
-    wb_command -set-map-names ${hemi}.parc.label.gii -map 1 "${hemi}_parc"
-
-    #### convert to freesurfer .annot file ####
-    [ ! -f ./${hemi}.parc.annot ] && mris_convert --annot ${hemi}.parc.label.gii ${white} ./${hemi}.parc.annot
-  fi
-done
-
 # identify parcellations to use
 parcellations="${aparc_to_use}"
 if [ -f ./lh.parc.annot ]; then
