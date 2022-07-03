@@ -8,7 +8,7 @@
 
 set -e
 
-aparc_to_use=`jq -r '.fsaparc' config.json`
+aparc_to_use=`jq -r '.validator_csv' config.json`
 
 [ ! -d ./parc-stats ] && mkdir -p ./parc-stats
 
