@@ -45,7 +45,7 @@ for hemi in $hemispheres
 do
   echo "converting files for ${hemi}"
   parc=$(eval "echo \$${hemi}_annot")
-  white=$(eval "echo \$${hemi}_white")"/"${hemi}".white.gii"
+  white=$(eval "echo \$${hemi}_white")
 
   # check if white exists
   for i in ${white}
