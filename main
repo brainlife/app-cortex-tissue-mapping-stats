@@ -20,6 +20,12 @@ time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt 
 # compute statistics
 time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/freesurfer:7.2.0 ./compute-stats.sh
 
+# attepmt to grab provenance information from config to set important informtation in meta data of output (i.e. the particular atlas of the parcellation)
+if [ -f ./lh.parc.annot ]; then
+	parc_id=`jq -r '._inputs[] | select(.id == "parc_surface") | .dataset_id' config.json`
+	curl https://brainlife.io/api/warehouse/dataset/prov/$parc_id > prov.json
+fi
+
 # generate csv's for each statistic that can be useful in MLC analyses
 time singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./generateCSV.py
 
