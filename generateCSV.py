@@ -42,6 +42,7 @@ def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns
 		out.reset_index(drop=True,inplace=True)
 		
 		# append to final merged data structure
+		merged_out = merged_out.append(out)
 
 		# save to csv
 		out.to_csv(outdir+'/'+i+'.csv',index=False)
