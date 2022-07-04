@@ -61,7 +61,6 @@ def main():
 
     #### parse inputs ####
     subjectID = config['_inputs'][0]['meta']['subject']
-    aparc_to_use = config['validator_csv']
 
     # set "parcellations", i.e the eccentricity binnings
     parcellations = ['aparc','aparc.a2009s']
