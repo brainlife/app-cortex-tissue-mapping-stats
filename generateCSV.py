@@ -100,7 +100,7 @@ def main():
 	hemispheres = ['lh','rh']
 	
 	# identify atlas ID
-	with open('provenance.json','r') as prov_f:
+	with open('prov.json','r') as prov_f:
 		prov = json.load(prov_f)
 		
 	atlas_id = identifyParcAtlas(prov)
