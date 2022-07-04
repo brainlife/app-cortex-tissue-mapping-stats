@@ -22,7 +22,7 @@ time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt 
 
 # attepmt to grab provenance information from config to set important informtation in meta data of output (i.e. the particular atlas of the parcellation)
 if [ -f ./lh.parc.annot ]; then
-	parc_id=`jq -r '._inputs[] | select(.id == "parc_surface") | .dataset_id' config.json`
+	parc_id=`jq -r '._inputs[] | select(.id == "parc") | .dataset_id' config.json`
 	curl https://brainlife.io/api/warehouse/dataset/prov/$parc_id > prov.json
 fi
 
