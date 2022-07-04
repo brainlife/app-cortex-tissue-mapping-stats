@@ -7,7 +7,17 @@ import numpy as np
 import os, sys, argparse
 import glob
 
-def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns,hemispheres,parcellations,outdir):
+def identifyParcAtlas(provenance_data):
+	atlas = ""
+	for i in provenance_data["nodes"]:
+		for j in i:
+			if "atlas" in i[j]:
+				if i[j]["atlas"]:
+					atlas = atlas.join((i[j]["atlas"]))
+
+	return atlas
+
+def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns,hemispheres,parcellations,outdir,atlas_id):
 
 	merged_out = pd.DataFrame(columns=columns)
 	
@@ -18,7 +28,10 @@ def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns
 			tmp = pd.read_csv('./'+i+'.'+h+'.anatomical.csv',header=None,names=['structureID']+anatomical_measures)
 			if i != 'parc':
 				tmp['structureID'] = [ h+'_'+f for f in tmp['structureID'] ]
-			tmp['parcellationID'] = [ i for f in range(len(tmp['structureID'])) ]
+			if i == 'parc' and atlas_id:
+				tmp['parcellationID'] = [ atlas_id for f in range(len(tmp['structureID'])) ]
+			else:
+				tmp['parcellationID'] = [ i for f in range(len(tmp['structureID'])) ]
 			tmp['subjectID'] = [ str(subjectID) for f in range(len(tmp['structureID'])) ]
 			tmp['hemisphere'] = [ h for f in range(len(tmp['structureID'])) ]
 
@@ -31,7 +44,11 @@ def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns
 				tmp2.rename(columns={'StructName': 'structureID', 'Mean': m},inplace=True)
 				if i != 'parc':
 					tmp2['structureID'] = [ h+'_'+f for f in tmp2['structureID'] ]
-				tmp2['parcellationID'] = [ i for f in range(len(tmp2['structureID'])) ]
+				if i == 'parc' and atlas_id:
+					tmp2['parcellationID'] = [ atlas_id for f in range(len(tmp2['structureID'])) ]
+				else:
+					tmp2['parcellationID'] = [ i for f in range(len(tmp2['structureID'])) ]
+
 				tmp2['subjectID'] = [ str(subjectID) for f in range(len(tmp2['structureID'])) ]
 				tmp2['hemisphere'] = [ h for f in range(len(tmp2['structureID'])) ]
 
@@ -81,7 +98,13 @@ def main():
 
 	# set hemispheres
 	hemispheres = ['lh','rh']
-
+	
+	# identify atlas ID
+	with open('provenance.json','r') as prov_f:
+		prov = json.load(prov_f)
+		
+	atlas_id = identifyParcAtlas(prov)
+	
 	# set outdir
 	outdir = 'parc-stats/parc-stats'
 
@@ -94,7 +117,7 @@ def main():
 
 	#### run command to generate csv structures ####
 	print("generating csvs")
-	generateSummaryCsvs(subjectID,anatomical_measures, diffusion_measures,columns,hemispheres,parcellations,outdir)
+	generateSummaryCsvs(subjectID,anatomical_measures, diffusion_measures,columns,hemispheres,parcellations,outdir,atlas_id)
 
 if __name__ == '__main__':
 	main()
