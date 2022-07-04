@@ -7,6 +7,15 @@ import numpy as np
 import os, sys, argparse
 import glob
 
+def outputProductJson(out_json_path,parcellations):
+	
+	out = {}
+	out['meta'] = {}
+	out['meta']['parcellations'] = parcellations
+	
+	with open(out_json_path,'w') as out_f:
+		json.dump(out,out_f)
+
 def identifyParcAtlas(provenance_data):
 	atlas = ""
 	for i in provenance_data["nodes"]:
@@ -118,6 +127,12 @@ def main():
 	#### run command to generate csv structures ####
 	print("generating csvs")
 	generateSummaryCsvs(subjectID,anatomical_measures, diffusion_measures,columns,hemispheres,parcellations,outdir,atlas_id)
+	
+	#### output product.json with important information for reference dataset visualizater
+	if atlas_id:
+		parcellations = parcellations[:-1]+[atlas_id]
+		
+	outputProductJson('product.json',parcellations)
 
 if __name__ == '__main__':
 	main()
