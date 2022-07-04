@@ -7,8 +7,27 @@ import numpy as np
 import os, sys, argparse
 import glob
 
-def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns,hemispheres,parcellations,outdir):
+def outputProductJson(out_json_path,parcellations):
 	
+	out = {}
+	out['meta'] = {}
+	out['meta']['parcellations'] = parcellations
+	
+	with open(out_json_path,'w') as out_f:
+		json.dump(out,out_f)
+
+def identifyParcAtlas(provenance_data):
+	atlas = ""
+	for i in provenance_data["nodes"]:
+		for j in i:
+			if "atlas" in i[j]:
+				if i[j]["atlas"]:
+					atlas = atlas.join((i[j]["atlas"]))
+
+	return atlas
+
+def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns,hemispheres,parcellations,outdir,atlas_id):
+
 	merged_out = pd.DataFrame(columns=columns)
 	
 	for i in parcellations:
@@ -18,7 +37,10 @@ def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns
 			tmp = pd.read_csv('./'+i+'.'+h+'.anatomical.csv',header=None,names=['structureID']+anatomical_measures)
 			if i != 'parc':
 				tmp['structureID'] = [ h+'_'+f for f in tmp['structureID'] ]
-			tmp['parcellationID'] = [ i for f in range(len(tmp['structureID'])) ]
+			if i == 'parc' and atlas_id:
+				tmp['parcellationID'] = [ atlas_id for f in range(len(tmp['structureID'])) ]
+			else:
+				tmp['parcellationID'] = [ i for f in range(len(tmp['structureID'])) ]
 			tmp['subjectID'] = [ str(subjectID) for f in range(len(tmp['structureID'])) ]
 			tmp['hemisphere'] = [ h for f in range(len(tmp['structureID'])) ]
 
@@ -31,7 +53,11 @@ def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns
 				tmp2.rename(columns={'StructName': 'structureID', 'Mean': m},inplace=True)
 				if i != 'parc':
 					tmp2['structureID'] = [ h+'_'+f for f in tmp2['structureID'] ]
-				tmp2['parcellationID'] = [ i for f in range(len(tmp2['structureID'])) ]
+				if i == 'parc' and atlas_id:
+					tmp2['parcellationID'] = [ atlas_id for f in range(len(tmp2['structureID'])) ]
+				else:
+					tmp2['parcellationID'] = [ i for f in range(len(tmp2['structureID'])) ]
+
 				tmp2['subjectID'] = [ str(subjectID) for f in range(len(tmp2['structureID'])) ]
 				tmp2['hemisphere'] = [ h for f in range(len(tmp2['structureID'])) ]
 
@@ -49,52 +75,64 @@ def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns
 	
 	# save to csv
 	merged_out.to_csv(outdir+'/merged.csv',index=False)
-
+	
 	#return out
 
 def main():
 
-    print("setting up input parameters")
-    #### load config ####
-    with open('config.json','r') as config_f:
-    	config = json.load(config_f)
+	print("setting up input parameters")
+	#### load config ####
+	with open('config.json','r') as config_f:
+		config = json.load(config_f)
 
-    #### parse inputs ####
-    subjectID = config['_inputs'][0]['meta']['subject']
+	#### parse inputs ####
+	subjectID = config['_inputs'][0]['meta']['subject']
 
-    # set "parcellations", i.e the eccentricity binnings
-    parcellations = ['aparc','aparc.a2009s']
-    if os.path.isfile('./aparc.DKTatlas.lh.anatomical.csv'):
-        parcellations = parcellations + ['aparc.DKTatlas']
+	# set "parcellations", i.e the eccentricity binnings
+	parcellations = ['aparc','aparc.a2009s']
+	if os.path.isfile('./aparc.DKTatlas.lh.anatomical.csv'):
+		parcellations = parcellations + ['aparc.DKTatlas']
 
-    if os.path.isfile('./lh.parc.annot'):
-    	parcellations = parcellations+['parc']
+	if os.path.isfile('./lh.parc.annot'):
+		parcellations = parcellations+['parc']
 
-    # identify diffusion measures
-    diffusion_measures = [  x.split(".")[3] for x in glob.glob("./"+aparc_to_use+".lh.*.csv") if 'anatomical' not in x ]
+	# identify diffusion measures
+	diffusion_measures = [  x.split(".")[3] for x in glob.glob("./aparc.lh.*.csv") if 'anatomical' not in x ]
 
-    # anatomical measures
-    anatomical_measures = ['number_of_vertices','surface_area_mm^2','gray_matter_volume_mm^3','thickness','thickness_std','mean_curv','gaus_curv','foldind','curvind']
+	# anatomical measures
+	anatomical_measures = ['number_of_vertices','surface_area_mm^2','gray_matter_volume_mm^3','thickness','thickness_std','mean_curv','gaus_curv','foldind','curvind']
 
-    # set columns for pandas array
-    columns = ['subjectID','structureID','parcellationID'] + diffusion_measures + anatomical_measures
+	# set columns for pandas array
+	columns = ['subjectID','structureID','parcellationID'] + diffusion_measures + anatomical_measures
 
-    # set hemispheres
-    hemispheres = ['lh','rh']
+	# set hemispheres
+	hemispheres = ['lh','rh']
+	
+	# identify atlas ID
+	with open('prov.json','r') as prov_f:
+		prov = json.load(prov_f)
+		
+	atlas_id = identifyParcAtlas(prov)
+	
+	# set outdir
+	outdir = 'parc-stats/parc-stats'
 
-    # set outdir
-    outdir = 'parc-stats/parc-stats'
+	# generate output directory if not already there
+	if os.path.isdir(outdir):
+		print("directory exits")
+	else:
+		print("making output directory")
+		os.mkdir(outdir)
 
-    # generate output directory if not already there
-    if os.path.isdir(outdir):
-        print("directory exits")
-    else:
-        print("making output directory")
-        os.mkdir(outdir)
-
-    #### run command to generate csv structures ####
-    print("generating csvs")
-    generateSummaryCsvs(subjectID,anatomical_measures, diffusion_measures,columns,hemispheres,parcellations,outdir)
+	#### run command to generate csv structures ####
+	print("generating csvs")
+	generateSummaryCsvs(subjectID,anatomical_measures, diffusion_measures,columns,hemispheres,parcellations,outdir,atlas_id)
+	
+	#### output product.json with important information for reference dataset visualizater
+	if atlas_id:
+		parcellations = parcellations[:-1]+[atlas_id]
+		
+	outputProductJson('product.json',parcellations)
 
 if __name__ == '__main__':
 	main()
