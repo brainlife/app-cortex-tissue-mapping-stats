@@ -71,7 +71,7 @@ def main():
 		parcellations = parcellations+['parc']
 
 	# identify diffusion measures
-	diffusion_measures = [  x.split(".")[4] for x in glob.glob("./"+aparc_to_use+".lh.*.csv") if 'anatomical' not in x ]
+	diffusion_measures = [  x.split(".")[4] for x in glob.glob("./aparc.lh.*.csv") if 'anatomical' not in x ]
 
 	# anatomical measures
 	anatomical_measures = ['number_of_vertices','surface_area_mm^2','gray_matter_volume_mm^3','thickness','thickness_std','mean_curv','gaus_curv','foldind','curvind']
