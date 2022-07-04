@@ -9,6 +9,8 @@ import glob
 
 def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns,hemispheres,parcellations,outdir):
 
+	merged_out = pd.DataFrame(columns=columns)
+	
 	for i in parcellations:
 		out = pd.DataFrame(columns=columns)
 		for h in hemispheres:
@@ -38,10 +40,15 @@ def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns
 
 		# reset index
 		out.reset_index(drop=True,inplace=True)
+		
+		# append to final merged data structure
 
 		# save to csv
 		out.to_csv(outdir+'/'+i+'.csv',index=False)
-
+	
+	# save to csv
+	merged_out.to_csv(outdir+'/merged.csv',index=False)
+	
 	#return out
 
 def main():
