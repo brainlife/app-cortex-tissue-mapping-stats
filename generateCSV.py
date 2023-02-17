@@ -95,6 +95,13 @@ def main():
 
 	if os.path.isfile('./lh.parc.annot'):
 		parcellations = parcellations+['parc']
+		# identify atlas ID
+		with open('prov.json','r') as prov_f:
+			prov = json.load(prov_f)
+		
+		atlas_id = identifyParcAtlas(prov)
+	else:
+		atlas_id = ''
 
 	# identify diffusion measures
 	diffusion_measures = [  x.split(".")[3] for x in glob.glob("./aparc.lh.*.csv") if 'anatomical' not in x ]
@@ -108,11 +115,7 @@ def main():
 	# set hemispheres
 	hemispheres = ['lh','rh']
 	
-	# identify atlas ID
-	with open('prov.json','r') as prov_f:
-		prov = json.load(prov_f)
-		
-	atlas_id = identifyParcAtlas(prov)
+
 	
 	# set outdir
 	outdir = 'parc-stats/parc-stats'
