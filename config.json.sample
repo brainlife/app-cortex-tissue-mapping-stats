@@ -1,0 +1,5 @@
+{
+	"cortexmap":	"/inputdata/cortexmap",
+	"freesurfer":	"/inputdata/output",
+	"threshold":	"0.1"
+}

@@ -1,35 +1,31 @@
 #!/bin/bash
-
-#PBS -l nodes=1:ppn=1
-#PBS -l vmem=8gb
-#PBS -l walltime=3:30:00
-#PBS -N app-endpoint-mapping-stats
+#PBS -l nodes:1,ppn:1,walltime=02:00:00
+#PBS -N app-parc-stats
 #PBS -V
 
-set -x
-
-# copy license and export path for freesurfer
 [ -z "$FREESURFER_LICENSE" ] && echo "Please set FREESURFER_LICENSE in .bashrc" && exit 1;
 echo $FREESURFER_LICENSE > license.txt
 
-[ ! -d ./parc-stats ] && mkdir -p ./parc-stats ./parc-stats/parc-stats
+# create labels
+time singularity exec -e docker://brainlife/connectome_workbench:1.5.0-freesurfer-update ./labelmaker.sh
 
-# preprocess
-time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/freesurfer:7.0.0 ./preprocess.sh
+# create lut file
+time singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./createColorLUT.py
 
-# generate appropriate summary statistic text files
-time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/connectome_workbench:1.4.2b ./compute-stats.sh
+# compute stats
+time singularity exec -e -B `pwd`/license.txt:/usr/loca/freesurfer/license.txt docker://brainlife:freesurfer:7.3.2 ./computestats.sh
 
-# generate csv's for each statistic that can be useful in MLC analyses
-time singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./generateCSV.py
+# build output csv
+time singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./build_parc_stats.py
 
- if [ -f ./parc-stats/parc-stats/tracts_STDEV.csv ]; then
- 	mkdir raw
- 	mv rois/ parcellation-surface/ resliced/ *.txt ./tmp/*.txt ./raw/
- 	rm -rf tmp output cortexmap
- 	echo "complete"
- 	exit 0
- else
- 	echo "stats computations failed somewhere. please check logs and derivatives"
- 	exit 1
- fi
+# check if output file is missing. if so, exit
+if [ ! -f ./parc-stats/parc-stats/endpoints.csv ]; then
+    echo "something went wrong. check logs and derivatives"
+    exit 1
+fi
+
+# if pass, finish up
+echo "complete"
+mkdir raw
+mv tmp/* tmp2/* *.txt raw/
+exit 0
