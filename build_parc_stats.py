@@ -37,8 +37,9 @@ def clean_up_tmp_stats(df):
 def check_if_data_is_empty(df,column_names,struc_name):
 
     if df['structureID'].values[0] != struc_name:
-        df[[column_names]] = 0
-        df['structureID'] = struc_name
+        for i in column_names:
+            df[i] = 0
+            df['structureID'] = struc_name
 
     return df
 
@@ -74,6 +75,7 @@ def main():
 
     # grab subject ID
     subject = config['_inputs'][0]['meta']['subject']
+    # subject = 'test'
 
     # make parc-stats output directories
     if not os.path.isdir('parc-stats'):
@@ -97,7 +99,7 @@ def main():
     # build dataframes
     # df = pd.DataFrame(columns=['structureID','nodeID']+measures)
     df = pd.DataFrame(columns=['structureID']+measures)
-    df_curv = pd.DataFrame(columns=['nodeID']+curv_measures)
+    df_curv = pd.DataFrame(columns=curv_measures)
 
     # loop through files and populate dataframes
     for i in range(len(files)):
