@@ -73,8 +73,7 @@ def main():
         config = json.load(config_f)
 
     # grab subject ID
-    # subject = config['_inputs'][0]['meta']['subject']
-    subject = 'test'
+    subject = config['_inputs'][0]['meta']['subject']
 
     # make parc-stats output directories
     if not os.path.isdir('parc-stats'):
