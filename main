@@ -13,7 +13,7 @@ time singularity exec -e docker://brainlife/connectome_workbench:1.5.0-freesurfe
 time singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./createColorLUT.py
 
 # compute stats
-time singularity exec -e -B `pwd`/license.txt:/usr/loca/freesurfer/license.txt docker://brainlife:freesurfer:7.3.2 ./computestats.sh
+time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/freesurfer:7.3.2 ./computestats.sh
 
 # build output csv
 time singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./build_parc_stats.py
