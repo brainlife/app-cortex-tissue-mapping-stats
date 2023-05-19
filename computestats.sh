@@ -16,6 +16,10 @@ export SUBJECTS_DIR=${currentDir}
 # indentify files
 files=(`find $topPath -type f -exec basename -a {} +`)
 
+# convert white surface from cortexmap
+[ ! -f ./lh.white ] && mris_convert ${cortexmap}/surf/lh.white.surf.gii ./lh.white
+[ ! -f ./rh.white ] && mris_convert ${cortexmap}/surf/rh.white.surf.gii ./rh.white
+
 # going to identify which are left hemisphere and which are right hemisphere
 lh_files=""
 rh_files=""

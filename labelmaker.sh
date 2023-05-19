@@ -52,7 +52,3 @@ do
     [ ! -f ${currentDir}/tmp/${files[$i]} ] && wb_command -metric-math `echo ${metric_string}` -var x ${topPath}/${files[$i]} ${currentDir}/tmp/${files[$i]} 
     [ ! -f ${currentDir}/tmp2/${out_name} ] && wb_command -metric-label-import ${currentDir}/tmp/${files[$i]} ${currentDir}/label.txt $currentDir/tmp2/${out_name} -discard-others -drop-unused-labels && wb_command -set-map-names $currentDir/tmp2/${out_name} -map 1 ${label_name}
 done
-
-# convert white surface from cortexmap
-[ ! -f ./lh.white ] && mris_convert ${cortexmap}/surf/lh.white.surf.gii ./lh.white
-[ ! -f ./rh.white ] && mris_convert ${cortexmap}/surf/rh.white.surf.gii ./rh.white
