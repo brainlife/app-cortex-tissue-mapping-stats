@@ -68,5 +68,5 @@ do
     [ ! -f ./${label_name##${currentDir}/tmp2/}.txt ] && mris_anatomical_stats -a ./output/label/${label_name##${currentDir}/tmp2/}.annot -b output rh > ./${label_name##${currentDir}/tmp2/}.txt
     
     # compute curvature specific measures
-    [ ! -f ./${label_name##${currentDir}/tmp2/}.curv.txt ] && mri_segstats --annot output rh ${label_name##${currentDir}/tmp2/lh.} --i ./output/surf/rh.curv --sum ./${label_name##${currentDir}/tmp2/}.curv.txt
+    [ ! -f ./${label_name##${currentDir}/tmp2/}.curv.txt ] && mri_segstats --annot output rh ${label_name##${currentDir}/tmp2/rh.} --i ./output/surf/rh.curv --sum ./${label_name##${currentDir}/tmp2/}.curv.txt
 done
