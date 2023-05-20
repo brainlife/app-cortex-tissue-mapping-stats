@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# set -e
-# set -x
+set -e
+set -x
 
 MinDegree=`jq -r '.minDegree' config.json`
 MinDegree=(`echo ${MinDegree}`)

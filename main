@@ -3,8 +3,8 @@
 #PBS -N app-parc-stats
 #PBS -V
 
-# [ -z "$FREESURFER_LICENSE" ] && echo "Please set FREESURFER_LICENSE in .bashrc" && exit 1;
-# echo $FREESURFER_LICENSE > license.txt
+[ -z "$FREESURFER_LICENSE" ] && echo "Please set FREESURFER_LICENSE in .bashrc" && exit 1;
+echo $FREESURFER_LICENSE > license.txt
 
 # bin by prf measure and make varea label
 time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/freesurfer:7.3.2 ./funkmaker.sh
@@ -22,10 +22,10 @@ time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt 
 time singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./build_parc_stats.py
 
 # check if output file is missing. if so, exit
-# if [ ! -f ./parc-stats/parc-stats/endpoints.csv ]; then
-#     echo "something went wrong. check logs and derivatives"
-#     exit 1
-# fi
+if [ ! -f ./parc-stats/parc-stats/endpoints.csv ]; then
+    echo "something went wrong. check logs and derivatives"
+    exit 1
+fi
 
 # if pass, finish up
 echo "complete"

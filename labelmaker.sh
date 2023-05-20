@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# set -e
-# set -x
+set -e
+set -x
 
 # inputs
 MinDegree=`jq -r '.minDegree' config.json`
