@@ -1,5 +1,7 @@
 {
-	"cortexmap":	"/inputdata/cortexmap",
 	"freesurfer":	"/inputdata/output",
-	"threshold":	"0.1"
+	"prf_surfaces":	"/inputdata/prf_surfaces",
+	"minDegree":	"0 35 80 125 160",
+	"maxDegree":	"20 55 100 145 180",
+	"prf_measure":	"polarAngle"
 }
