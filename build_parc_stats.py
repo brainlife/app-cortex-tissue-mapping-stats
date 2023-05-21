@@ -72,10 +72,9 @@ def main():
         config = json.load(config_f)
 
     # grab subject ID
-    # subject = config['_inputs'][0]['meta']['subject']
+    subject = config['_inputs'][0]['meta']['subject']
     prf_measure = config['prf_measure']
-    subject = 'test'
-
+    
     # make parc-stats output directories
     if not os.path.isdir('parc-stats'):
         os.mkdir('parc-stats')
