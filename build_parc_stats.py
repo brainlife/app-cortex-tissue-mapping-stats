@@ -83,10 +83,11 @@ def main():
         os.mkdir('parc-stats/parc-stats')
 
     # grab stats files
-    files = glob.glob('*track*.txt')
+    files = glob.glob('*.txt')
 
     # remove curvature files. will grab those via loop
     files = [ f for f in files if 'curv' not in f ]
+    files = [ f for f in files if f not in ['lut.txt','label.txt','license.txt'] ]
 
     # set up measure column names for measures and curv_measures. these are hard coded. problematic?
     measures = ['number_of_vertices','surface_area_mm^2','gray_matter_volume_mm^3','avg_thickness_mm','std_thickness_mm','integrated_rectified_mean_curvature','integrated_rectified_gaussian_curvature','folding_index','intrinsic_curvature_index']
@@ -132,7 +133,7 @@ def main():
     final['subjectID'] = [ subject for f in final['number_of_vertices']]
 
     # output csv
-    final.to_csv('parc-stats/parc-stats/endpoints.csv',index=False)
+    final.to_csv('parc-stats/parc-stats/cortex-mapped-anatomical-stats.csv',index=False)
 
 if __name__ == "__main__":
     main()
