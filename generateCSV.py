@@ -26,7 +26,7 @@ def identifyParcAtlas(provenance_data):
 
 	return atlas
 
-def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns,hemispheres,parcellations,outdir,atlas_id):
+def generateSummaryCsvs(subjectID,anatomical_measures,columns,hemispheres,parcellations,outdir,atlas_id):
 
 	merged_out = pd.DataFrame(columns=columns)
 	
@@ -45,24 +45,24 @@ def generateSummaryCsvs(subjectID,anatomical_measures,diffusion_measures,columns
 			tmp['hemisphere'] = [ h for f in range(len(tmp['structureID'])) ]
 
 			# diffusion
-			tmp_names = ['Index' ,'SegId', 'StructName', 'Mean', 'StdDev', 'Min', 'Max', 'Range']
-			for m in diffusion_measures:
-				tmp2 = pd.read_csv('./'+i+'.'+h+'.'+m+'.csv',header=None,names=tmp_names)
-				tmp2 = tmp2[['StructName','Mean']]
+			# tmp_names = ['Index' ,'SegId', 'StructName', 'Mean', 'StdDev', 'Min', 'Max', 'Range']
+			# for m in diffusion_measures:
+			# 	tmp2 = pd.read_csv('./'+i+'.'+h+'.'+m+'.csv',header=None,names=tmp_names)
+			# 	tmp2 = tmp2[['StructName','Mean']]
 
-				tmp2.rename(columns={'StructName': 'structureID', 'Mean': m},inplace=True)
-				if i != 'parc':
-					tmp2['structureID'] = [ h+'_'+f for f in tmp2['structureID'] ]
-				if i == 'parc' and atlas_id:
-					tmp2['parcellationID'] = [ atlas_id for f in range(len(tmp2['structureID'])) ]
-				else:
-					tmp2['parcellationID'] = [ i for f in range(len(tmp2['structureID'])) ]
+			# 	tmp2.rename(columns={'StructName': 'structureID', 'Mean': m},inplace=True)
+			# 	if i != 'parc':
+			# 		tmp2['structureID'] = [ h+'_'+f for f in tmp2['structureID'] ]
+			# 	if i == 'parc' and atlas_id:
+			# 		tmp2['parcellationID'] = [ atlas_id for f in range(len(tmp2['structureID'])) ]
+			# 	else:
+			# 		tmp2['parcellationID'] = [ i for f in range(len(tmp2['structureID'])) ]
 
-				tmp2['subjectID'] = [ str(subjectID) for f in range(len(tmp2['structureID'])) ]
-				tmp2['hemisphere'] = [ h for f in range(len(tmp2['structureID'])) ]
+			# 	tmp2['subjectID'] = [ str(subjectID) for f in range(len(tmp2['structureID'])) ]
+			# 	tmp2['hemisphere'] = [ h for f in range(len(tmp2['structureID'])) ]
 
-				tmp = pd.merge(tmp, tmp2, on=["subjectID", "structureID", "hemisphere", "parcellationID"])
-			out = out.append(tmp)
+			# 	tmp = pd.merge(tmp, tmp2, on=["subjectID", "structureID", "hemisphere", "parcellationID"])
+			# out = out.append(tmp)
 
 		# reset index
 		out.reset_index(drop=True,inplace=True)
@@ -104,18 +104,16 @@ def main():
 		atlas_id = ''
 
 	# identify diffusion measures
-	diffusion_measures = [  x.split(".")[3] for x in glob.glob("./aparc.lh.*.csv") if 'anatomical' not in x ]
+	# diffusion_measures = [  x.split(".")[3] for x in glob.glob("./aparc.lh.*.csv") if 'anatomical' not in x ]
 
 	# anatomical measures
 	anatomical_measures = ['number_of_vertices','surface_area_mm^2','gray_matter_volume_mm^3','thickness','thickness_std','mean_curv','gaus_curv','foldind','curvind']
 
 	# set columns for pandas array
-	columns = ['subjectID','structureID','parcellationID'] + diffusion_measures + anatomical_measures
+	columns = ['subjectID','structureID','parcellationID'] + anatomical_measures
 
 	# set hemispheres
 	hemispheres = ['lh','rh']
-	
-
 	
 	# set outdir
 	outdir = 'parc-stats/parc-stats'
@@ -129,7 +127,7 @@ def main():
 
 	#### run command to generate csv structures ####
 	print("generating csvs")
-	generateSummaryCsvs(subjectID,anatomical_measures, diffusion_measures,columns,hemispheres,parcellations,outdir,atlas_id)
+	generateSummaryCsvs(subjectID,anatomical_measures ,columns,hemispheres,parcellations,outdir,atlas_id)
 	
 	#### output product.json with important information for reference dataset visualizater
 	if atlas_id:
