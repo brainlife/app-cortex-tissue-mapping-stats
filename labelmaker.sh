@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# set -e
-# set -x
+set -e
+set -x
 
 # identify all func files in cortexmap input
 files=(`ls ./cortexmap/func/`)
