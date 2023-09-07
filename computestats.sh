@@ -28,3 +28,6 @@ do
   [ ! -f ./cortexmap/label/$i ] && mv ${i} ./cortexmap/label/
   [ ! -f ./cortexmap/surf/${h}.varea.shape.gii ] && mv ${h}.varea.shape.gii ./cortexmap/surf/
 done
+
+mv *.label.gii ./cortexmap/label/
+mv *.func.gii ./cortexmap/func/
