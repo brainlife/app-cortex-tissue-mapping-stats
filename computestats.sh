@@ -24,10 +24,11 @@ do
   [ ! -f ./${var_filename}.curv.txt ] && mri_segstats --annot output ${h} ${var_filename##${h}.} --i ./output/surf/${h}.curv --sum ./${var_filename}.curv.txt
   
   # move to cortexmap for output
-  [ ! -f ./cortexmap/func/${var_filename}.func.gii ] && mv ${var_filename}.func.gii ./cortexmap/func/
-  [ ! -f ./cortexmap/label/$i ] && mv ${i} ./cortexmap/label/
-  [ ! -f ./cortexmap/surf/${h}.varea.shape.gii ] && mv ${h}.varea.shape.gii ./cortexmap/surf/
+  #[ ! -f ./cortexmap/func/${var_filename}.func.gii ] && mv ${var_filename}.func.gii ./cortexmap/func/
+  #[ ! -f ./cortexmap/label/$i ] && mv ${i} ./cortexmap/label/
+  #[ ! -f ./cortexmap/surf/${h}.varea.shape.gii ] && mv ${h}.varea.shape.gii ./cortexmap/surf/
 done
 
 mv *.label.gii ./cortexmap/label/
 mv *.func.gii ./cortexmap/func/
+mv *.shape.gii ./cortexmap/surf/
