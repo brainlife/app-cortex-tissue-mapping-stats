@@ -2,8 +2,8 @@
 
 # This script will compute statistics in each ROI of a parcellation
 
-# set -x
-# set -e
+set -x
+set -e
 
 #### parse inputs ####
 # configs
