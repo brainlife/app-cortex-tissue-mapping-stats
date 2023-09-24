@@ -2,8 +2,8 @@
 
 # This script will compute statistics in each ROI of a parcellation
 
-set -x
-set -e
+# set -x
+# set -e
 
 #### parse inputs ####
 # configs
@@ -29,6 +29,16 @@ parcellations="aparc aparc.a2009s"
 if [ -f ./output/mri/aparc.DKTatlas+aseg.mgz ]; then
   parcellations=${parcellations}" aparc.DKTatlas"
 fi
+
+# if additional annots, convert back to annot
+if [[ ! ${lh_annot} == 'null' ]]; then
+	mris_convert --annot ${lh_annot} ./output/surf/lh.white ./lh.parc.annot
+fi
+
+if [[ ! ${rh_annot} == 'null' ]]; then
+	mris_convert --annot ${rh_annot} ./output/surf/rh.white ./rh.parc.annot
+fi
+
 if [ -f ./lh.parc.annot ]; then
   parcellations=${parcellations}" parc"
 fi
