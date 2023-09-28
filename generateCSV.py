@@ -17,12 +17,13 @@ def outputProductJson(out_json_path,parcellations):
 		json.dump(out,out_f)
 
 def identifyParcAtlas(provenance_data):
-	atlas = ""
-	for i in provenance_data["nodes"]:
-		for j in i:
-			if "atlas" in i[j]:
-				if i[j]["atlas"]:
-					atlas = atlas.join((i[j]["atlas"]))
+	atlas = "atlas"
+	if 'nodes' in provenance_data.keys().tolist():
+		for i in provenance_data["nodes"]:
+			for j in i:
+				if "atlas" in i[j]:
+					if i[j]["atlas"]:
+						atlas = atlas.join((i[j]["atlas"]))
 
 	return atlas
 
