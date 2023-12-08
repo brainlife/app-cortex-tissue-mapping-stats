@@ -66,3 +66,5 @@ do
 		[ ! -f ${anat_outname}.csv ] && sed 's/ *$//' ./${anat_outname}_tailed.txt > ./${anat_outname}_tailed_comma.txt && sed 's/ \+/,/g' ./${anat_outname}_tailed_comma.txt > ./${anat_outname}.csv
 	done
 done
+
+exit 0
