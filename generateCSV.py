@@ -18,13 +18,15 @@ def outputProductJson(out_json_path,parcellations):
 
 def identifyParcAtlas(provenance_data):
 	atlas = "atlas"
-	if 'nodes' in provenance_data.keys().tolist():
-		for i in provenance_data["nodes"]:
-			for j in i:
-				if "atlas" in i[j]:
-					if i[j]["atlas"]:
-						atlas = atlas.join((i[j]["atlas"]))
-
+	try:
+		if 'nodes' in provenance_data.keys().tolist():
+			for i in provenance_data["nodes"]:
+				for j in i:
+					if "atlas" in i[j]:
+						if i[j]["atlas"]:
+							atlas = atlas.join((i[j]["atlas"]))
+	except:
+		pass
 	return atlas
 
 def generateSummaryCsvs(subjectID,anatomical_measures,columns,hemispheres,parcellations,outdir,atlas_id):
