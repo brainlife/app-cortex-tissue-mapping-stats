@@ -18,7 +18,7 @@ freesurfer=`jq -r '.freesurfer' config.json`
 hemispheres="lh rh"
 
 # filepaths
-[ ! -d ./output ] && cp -R ${freesurfer} ./output/ && chmod -R +w ./output/*
+[ ! -d ./output ] && cp -R ${freesurfer} ./output/ && chmod -R +w ./output/
 freesurfer="./output/"
 
 # set subjects dir for freesurfer to pwd
