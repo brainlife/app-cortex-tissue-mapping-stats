@@ -27,7 +27,7 @@ time singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./generateCSV.p
 
 if [ -f ./parc-stats/parc-stats/merged.csv ]; then
 	[ ! -d ./raw ] && mkdir raw
-	mv *.gii *.txt *.csv *.annot ./raw/
+	mv *.txt *.csv *.annot ./raw/
 	mv ./raw/license.txt ../
 	cp ./parc-stats/parc-stats/merged.csv ./parc-stats/parc-stats/cortex.csv
 	echo "complete"
