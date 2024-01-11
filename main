@@ -26,7 +26,7 @@ fi
 time singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./generateCSV.py
 
 if [ -f ./parc-stats/parc-stats/merged.csv ]; then
-	mkdir raw
+	[ ! -d ./raw ] && mkdir raw
 	mv *.gii *.txt *.csv *.annot ./raw/
 	mv ./raw/license.txt ../
 	cp ./parc-stats/parc-stats/merged.csv ./parc-stats/parc-stats/cortex.csv
