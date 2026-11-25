@@ -10,7 +10,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-lightgrey.svg" alt="MIT license"></a>
 </p>
 
-## 🧠 At a glance
+## At a glance
 
 <!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
 
@@ -20,14 +20,14 @@ Converts the Benson14 visual-area map from the prf input onto the FreeSurfer whi
 
 | | |
 |---|---|
-| 📥 **Inputs** | `neuro/freesurfer` · `neuro/prf` · `neuro/cortexmap` |
-| 📤 **Outputs** | `neuro/parc-stats` · `neuro/cortexmap` · `raw` |
-| 🐳 **Container** | `brainlife/freesurfer:7.3.2` |
-| ⚙️ **Resources** | 1 h walltime |
-| 🔑 **Requires** | `FREESURFER_LICENSE` |
-| 🔗 **Run it** | [doi.org/10.25663/brainlife.app.797](https://doi.org/10.25663/brainlife.app.797) |
+| **Inputs** | `neuro/freesurfer` · `neuro/prf` · `neuro/cortexmap` |
+| **Outputs** | `neuro/parc-stats` · `neuro/cortexmap` · `raw` |
+| **Container** | `brainlife/freesurfer:7.3.2` |
+| **Resources** | 1 h walltime |
+| **Requires** | `FREESURFER_LICENSE` |
+| **Run it** | [doi.org/10.25663/brainlife.app.797](https://doi.org/10.25663/brainlife.app.797) |
 
-#### 📥 Inputs
+#### Inputs
 
 | Input | Datatype | Required | Description |
 |---|---|---|---|
@@ -35,7 +35,7 @@ Converts the Benson14 visual-area map from the prf input onto the FreeSurfer whi
 | `prf` | `neuro/prf` | yes | Benson14 retinotopy output providing per-hemisphere varea (visual area) surface maps. |
 | `cortexmap` | `neuro/cortexmap` | yes | Cortexmap whose func/ maps are combined with the visual areas to define the labels. |
 
-#### 📤 Outputs
+#### Outputs
 
 | Output | Datatype | Description |
 |---|---|---|
@@ -45,7 +45,7 @@ Converts the Benson14 visual-area map from the prf input onto the FreeSurfer whi
 
 <!-- brainlife-app:end -->
 
-## 🏷️ Versions on brainlife.io
+## Versions on brainlife.io
 
 This repository hosts a family of Apps, each built from its own branch. All of them start from measures mapped to the cortical midthickness surface (a `neuro/cortexmap` dataset, for example from the cortex tissue mapping Apps) and/or a FreeSurfer output, and summarise them per region into `neuro/parc-stats` tables that can be used for group averages and machine learning analyses. They differ in the regions they use and the statistics they compute.
 
@@ -71,13 +71,13 @@ What each group of Apps computes:
 - **Maps on the surface** (`anatomical-stats-v1.2`): anatomical statistics inside any thresholded maps carried by a cortexmap.
 - **pRF visual areas** (`benson14-prf-eccentricity-stats`, `benson-prf-endpoints-v1.3-anatomical`): measures inside the Benson14 visual areas from a `neuro/prf` dataset. The eccentricity App bins the areas by the eccentricity ranges in `minDegree`/`maxDegree` and reports mean diffusion and anatomical measures; the current App reports vertex count, surface area, gray matter volume, thickness and curvature for each visual area, overall and restricted to the maps in the cortexmap.
 
-## 🚀 Running the App
+## Running the App
 
-### ☁️ On brainlife.io
+### On brainlife.io
 
 Open the App at [doi.org/10.25663/brainlife.app.797](https://doi.org/10.25663/brainlife.app.797), or another App from the table above, choose the inputs it asks for (a FreeSurfer output, a `neuro/cortexmap` dataset and, depending on the App, a `neuro/prf` dataset, tract-endpoint ROIs or a surface parcellation) and press **Execute**. The App writes a `neuro/parc-stats` dataset with the tables and a `raw` dataset with intermediate files; the current App also writes an updated `neuro/cortexmap` with the visual-area labels.
 
-### 💻 Locally
+### Locally
 
 You need [Singularity/Apptainer](https://apptainer.org/), [`jq`](https://jqlang.github.io/jq/) and a [FreeSurfer license](https://surfer.nmr.mgh.harvard.edu/registration.html). `main` runs each step in the `brainlife/freesurfer`, `brainlife/connectome_workbench` and `brainlife/freesurfer-stats` containers.
 
@@ -104,7 +104,7 @@ You need [Singularity/Apptainer](https://apptainer.org/), [`jq`](https://jqlang.
    ./main
    ```
 
-### 🧪 Sample data
+### Sample data
 
 Download sample datasets from brainlife.io with the [brainlife CLI](https://github.com/brainlife/cli):
 
@@ -115,7 +115,7 @@ mkdir input
 bl dataset download <dataset id>
 ```
 
-## 📦 Outputs
+## Outputs
 
 ```text
 parc-stats/
@@ -125,13 +125,13 @@ raw/                intermediate files (per-region text outputs, colour lookup t
 cortexmap/          current App only: the cortexmap with the visual-area labels added
 ```
 
-## 🩺 Troubleshooting
+## Troubleshooting
 
 - **`Please set FREESURFER_LICENSE in .bashrc`**: no FreeSurfer license in the environment. Set `FREESURFER_LICENSE` on the compute resource, or export it before running `./main`.
 - **`something went wrong. check logs and derivatives`** or **`stats computations failed somewhere. please check logs and derivatives`**: the final csv was not produced. Check the job log and the intermediate files for the failing step.
 - **Eccentricity App fails**: make sure `minDegree` and `maxDegree` have the same number of values.
 
-## 📚 Citing
+## Citing
 
 > [!TIP]
 > If you use this App in your work, please cite the App, the software it builds on and brainlife.io (below). GitHub's **Cite this repository** button gives the App citation in APA and BibTeX.
@@ -145,14 +145,14 @@ If you use these Apps, please cite the work they build on and brainlife.io:
 - Hayashi S, Caron BA, Heinsfeld AS, et al. brainlife.io: a decentralized and open-source cloud platform to support neuroscience research. *Nature Methods* 21:809–813 (2024). [doi:10.1038/s41592-024-02237-2](https://doi.org/10.1038/s41592-024-02237-2)
 - Avesani P, McPherson B, Hayashi S, et al. The open diffusion data derivatives, brain data upcycling via integrated publishing of derivatives and reproducible open cloud services. *Scientific Data* 6:69 (2019). [doi:10.1038/s41597-019-0073-y](https://doi.org/10.1038/s41597-019-0073-y)
 
-## 👥 Authors
+## Authors
 
 - Franco Pestilli (project director)
 - Brad Caron
 
 **Contributors:** Soichi Hayashi
 
-## 💰 Funding
+## Funding
 
 [![Wellcome-226486/Z/22/Z](https://img.shields.io/badge/Wellcome-226486%2FZ%2F22%2FZ-purple.svg)](https://wellcome.org/)
 [![NIH-NINDS-U24NS140384](https://img.shields.io/badge/NIH_NINDS-U24NS140384-green.svg)](https://reporter.nih.gov/project-details/11261037)
@@ -171,6 +171,6 @@ If you use these Apps, please cite the work they build on and brainlife.io:
 
 <sub>brainlife.io is publicly funded, and acknowledging that support helps keep it running. This App was developed with support from Wellcome, the U.S. National Institutes of Health (including the BRAIN Initiative BRAIN CONNECTS program: The Axonal Projectome EXchange, U24NS140384, and the Center for Mesoscale Connectomics, UM1NS132207) and the U.S. National Science Foundation.</sub>
 
-## ⚖️ License
+## License
 
 [MIT](LICENSE). FreeSurfer and Connectome Workbench are distributed under their own licenses.
