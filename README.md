@@ -3,6 +3,30 @@
 
 # Compute summary statistics of diffusion measures mapped to cortical surface 
 
+<!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
+
+**Computes FreeSurfer anatomical statistics (vertex count, surface area, gray matter volume, thickness, curvature) within Benson14 visual areas, overall and restricted to cortexmap maps, and outputs parc-stats CSVs.**
+
+Converts the Benson14 visual-area map from the prf input onto the FreeSurfer white surface, multiplies it with each cortex-mapped map to build visual-area labels, converts them to annotations and runs mris_anatomical_stats and mri_segstats on curvature for each. Use it to measure cortical morphometry in visual areas V1, V2, V3 and others defined by Benson14 retinotopy. Needs the FreeSurfer subject directory, the Benson14 prf output and a cortexmap of the same subject.
+
+Run it on brainlife.io: [https://doi.org/10.25663/brainlife.app.797](https://doi.org/10.25663/brainlife.app.797)
+
+| Input | Datatype | Required | Description |
+|---|---|---|---|
+| `freesurfer` | `neuro/freesurfer` | yes | FreeSurfer subject directory of the same subject, used for surfaces and anatomical statistics. |
+| `prf` | `neuro/prf` | yes | Benson14 retinotopy output providing per-hemisphere varea (visual area) surface maps. |
+| `cortexmap` | `neuro/cortexmap` | yes | Cortexmap whose func/ maps are combined with the visual areas to define the labels. |
+
+| Output | Datatype | Description |
+|---|---|---|
+| `parc-stats` | `neuro/parc-stats` | benson_varea_prf_anatomical.csv with anatomical and curvature statistics for each Benson14 visual area, overall and within each cortexmap map. |
+| `cortexmap` | `neuro/cortexmap` |  |
+| `raw` | `raw` | Derivatives generated during run for debugging |
+
+Runtime: container `brainlife/freesurfer:7.3.2`; 1 h walltime; needs `FREESURFER_LICENSE`.
+
+<!-- brainlife-app:end -->
+
 This app will compute multiple summary statistics from measures mapped to the cortical midthickness surface on a per-ROI basis. This app takes in a cortexmap datatype and an optional parcellation/surface datatype. This app will compute the following summary statistics: minimum, maximum, mean, median, mode, standard deviation, sample standard deviation (n-1), and nonzero vertex count. The app will output a csv for each summary measure summarizing the diffusion measures in each ROI parcellation. If no parcellation surface is inputted, the app will just compute stats from the labels file found in the cortexmap datatype (usually aparc.a2009s.labels.gii). These csvs can be used for computing group averages and for performing machine learning analyses. 
 
 ### Authors 
